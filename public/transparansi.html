@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Transparansi Keuangan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-600">
+
+    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
+        <a href="/index.html" class="text-xl font-bold text-slate-400 hover:text-blue-600 transition">← Kembali</a>
+        <div class="text-2xl font-bold text-blue-600 tracking-tighter">NUSAKA<span class="text-slate-800 text-sm italic">open_data</span></div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-6 pb-20">
+        <div class="text-center mb-12">
+            <span class="inline-block px-4 py-1.5 mb-4 text-xs font-bold text-green-600 bg-green-50 rounded-full border border-green-100 uppercase tracking-wider">
+                ● Live Update Realtime
+            </span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+                Transparansi <span class="text-blue-600">Mutlak.</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-slate-500">
+                Kami menjunjung tinggi kejujuran. Berikut adalah data visual arus kas masuk dan keluar organisasi yang dapat diakses oleh publik.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-blue-600 text-white p-8 rounded-[2.5rem] shadow-xl shadow-blue-200 relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500 rounded-full opacity-50 blur-2xl"></div>
+                <p class="text-blue-100 font-bold text-xs uppercase tracking-widest mb-2">Saldo Saat Ini</p>
+                <h3 class="text-4xl font-black">Rp 4.520.000</h3>
+                <p class="text-xs mt-4 text-blue-200">Aman di Rekening & Tripay</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-lg">
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mb-2">Total Pemasukan (Feb)</p>
+                <h3 class="text-4xl font-black text-slate-900 text-green-600">+ Rp 850.000</h3>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-lg">
+                <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mb-2">Total Pengeluaran (Feb)</p>
+                <h3 class="text-4xl font-black text-slate-900 text-red-500">- Rp 300.000</h3>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="font-bold text-slate-900 mb-6">Grafik Arus Kas (6 Bulan Terakhir)</h3>
+                <canvas id="cashFlowChart" height="200"></canvas>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="font-bold text-slate-900 mb-6">Alokasi Penggunaan Dana</h3>
+                <canvas id="allocationChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
+            <h3 class="font-bold text-slate-900 mb-6 text-lg">Laporan Penggunaan Dana (Bukti Kwitansi)</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 text-slate-400 text-[10px] uppercase font-bold tracking-wider">
+                        <tr>
+                            <th class="p-4 rounded-l-xl">Tanggal</th>
+                            <th class="p-4">Keterangan</th>
+                            <th class="p-4">Nominal</th>
+                            <th class="p-4 rounded-r-xl text-center">Bukti</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 text-sm">
+                        <tr>
+                            <td class="p-4 font-mono text-xs">10 Feb 2026</td>
+                            <td class="p-4 font-bold text-slate-700">Cetak Spanduk Seminar</td>
+                            <td class="p-4 text-red-500 font-bold">- Rp 150.000</td>
+                            <td class="p-4 text-center"><a href="#" class="text-blue-600 text-xs font-bold underline">Lihat Foto</a></td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 font-mono text-xs">05 Feb 2026</td>
+                            <td class="p-4 font-bold text-slate-700">Konsumsi Rapat Bulanan</td>
+                            <td class="p-4 text-red-500 font-bold">- Rp 50.000</td>
+                            <td class="p-4 text-center"><a href="#" class="text-blue-600 text-xs font-bold underline">Lihat Foto</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const ctx1 = document.getElementById('cashFlowChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Sep', 'Okt', 'Nov', 'Des', 'Jan', 'Feb'],
+                datasets: [{
+                    label: 'Pemasukan',
+                    data: [500, 600, 400, 700, 500, 850],
+                    borderColor: '#2563EB',
+                    tension: 0.4
+                }]
+            },
+            options: { plugins: { legend: { display: false } } }
+        });
+
+        const ctx2 = document.getElementById('allocationChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Acara', 'Administrasi', 'Sosial', 'Simpanan'],
+                datasets: [{
+                    data: [40, 20, 10, 30],
+                    backgroundColor: ['#2563EB', '#60A5FA', '#93C5FD', '#BFDBFE']
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk Admin | Nusakaeduone</title>
+    
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="../config.js"></script> 
+</head>
+<body class="bg-white h-screen flex overflow-hidden">
+
+    <div class="hidden lg:flex w-1/2 bg-blue-600 relative flex-col justify-between p-12 overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+        
+        <div class="relative z-10">
+            <div class="text-2xl font-bold text-white tracking-tighter">NUSAKA<span class="text-blue-200 text-sm italic">admin</span></div>
+        </div>
+        <div class="relative z-10">
+            <h1 class="text-5xl font-extrabold text-white mb-6 leading-tight">
+                Kelola Keuangan <br> Lebih Transparan.
+            </h1>
+            <p class="text-blue-100 text-lg max-w-md">
+                Sistem manajemen kas terintegrasi untuk organisasi modern.
+            </p>
+        </div>
+        <div class="relative z-10 text-xs text-blue-200 font-mono">System v1.0 • Secure Connection</div>
+    </div>
+
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#F8FAFC]">
+        <div class="w-full max-w-md bg-white p-10 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
+            
+            <div class="text-center mb-10">
+                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-blue-100">Restricted Access</span>
+                <h2 class="text-3xl font-extrabold text-slate-900">Selamat Datang</h2>
+                <p class="text-slate-400 text-sm mt-2">Masukkan kredensial pengurus Anda.</p>
+            </div>
+
+            <form id="loginForm" class="space-y-5" autocomplete="off">
+                <div id="errorAlert" class="hidden p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 text-center">
+                    </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest ml-1">Email</label>
+                    <input type="email" id="email" placeholder="admin@nusaka.com" required 
+                        class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all placeholder:font-normal">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest ml-1">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required
+                        class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all placeholder:font-normal">
+                </div>
+
+                <button type="submit" id="btnSubmit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-1 transition-all flex justify-center items-center">
+                    <span id="btnText">Masuk Dashboard</span>
+                    <svg id="btnLoader" class="hidden animate-spin ml-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </button>
+            </form>
+
+            <div class="mt-8 text-center">
+                <a href="../index.html" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition">← Kembali ke Halaman Utama</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // INISIALISASI VARIABEL UI
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passInput = document.getElementById('password');
+        const errorAlert = document.getElementById('errorAlert');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
+
+        // Fungsi menampilkan pesan (Aman dari XSS)
+        function showError(msg) {
+            errorAlert.textContent = msg; 
+            errorAlert.classList.remove('hidden');
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // 1. AMBIL KONEKSI DARI WINDOW (Yang dibuat di config.js)
+            const supabase = window.supabaseClient;
+
+            // Jika config.js gagal load atau tidak ada
+            if (!supabase) {
+                // Ini error teknis browser, boleh ditampilkan beda agar tau masalahnya di codingan
+                alert("Error Teknis: Config Database tidak terhubung. Cek config.js");
+                return;
+            }
+
+            // 2. UI LOADING STATE
+            btnSubmit.disabled = true;
+            btnText.textContent = "Memverifikasi...";
+            btnLoader.classList.remove('hidden');
+            errorAlert.classList.add('hidden'); // Sembunyikan error lama
+
+            const email = emailInput.value.trim();
+            const password = passInput.value;
+
+            try {
+                // 3. COBA LOGIN (Try to Login)
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                // Jika ada error apapun dari Supabase (salah password, user tidak ada, dll)
+                if (error) throw error; 
+
+                // 4. CEK ROLE (Hanya jika login auth berhasil)
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', data.user.id)
+                    .single();
+
+                // Jika User ada di Auth, tapi tidak punya profil Admin/Superadmin
+                if (!profile || (profile.role !== 'admin' && profile.role !== 'superadmin')) {
+                    await supabase.auth.signOut(); // Tendang keluar
+                    throw new Error("Unauthorized"); // Lempar ke catch
+                }
+
+                // 5. SUKSES - REDIRECT
+                localStorage.setItem('user_role', profile.role);
+
+                if (profile.role === 'superadmin') {
+                    window.location.href = '../developer/index.html';
+                } else {
+                    window.location.href = '../admin/dashboard.html';
+                }
+
+            } catch (err) {
+                // LOG DEBUG (Hanya muncul di Console Browser - Klik F12 untuk melihatnya)
+                // Ini penting buat kita tau error aslinya apa, tapi user tidak lihat.
+                console.error("Login Gagal (Debug):", err.message);
+
+                // ============================================================
+                // PESAN ERROR UNTUK USER (DISAMARKAN)
+                // ============================================================
+                // Apapun errornya (Database mati, password salah, hacker nyoba inject),
+                // User cuma lihat pesan ini:
+                showError("Email atau Password ada yang salah.");
+                
+                // Reset Tombol
+                btnSubmit.disabled = false;
+                btnText.textContent = "Masuk Dashboard";
+                btnLoader.classList.add('hidden');
+                passInput.value = ""; // Kosongkan password biar user ketik ulang
+            }
+        });
+    </script>
+</body>
+</html>
