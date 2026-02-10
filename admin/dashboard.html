@@ -53,6 +53,7 @@
     </aside>
 
     <main class="flex-1 lg:ml-72 flex flex-col min-h-screen">
+        
         <header class="sticky top-0 bg-[#F8FAFC]/80 backdrop-blur-md z-20 px-6 py-4 lg:px-10 flex justify-between items-center border-b border-slate-100 lg:border-none">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-lg border border-slate-200 shadow-sm text-slate-600">
@@ -64,12 +65,20 @@
                 </div>
             </div>
             
-            <a href="profile.html" id="adminAvatar" class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm cursor-pointer hover:ring-4 hover:ring-blue-50 transition border-2 border-white shadow-sm">
-                ...
-            </a>
+            <div class="flex items-center gap-3">
+                <button onclick="copyPublicLink()" class="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-sm group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                    <span id="btnShareText">Bagikan Transparansi</span>
+                </button>
+
+                <a href="profile.html" id="adminAvatar" class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm cursor-pointer hover:ring-4 hover:ring-blue-50 transition border-2 border-white shadow-sm">
+                    ...
+                </a>
+            </div>
         </header>
 
         <div class="p-6 lg:p-10 space-y-8">
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
                     <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-110 transition"></div>
@@ -104,10 +113,8 @@
 
     <script>
         // ==========================================
-        // SCRIPT LOGIC DASHBOARD
+        // UI HELPERS (SIDEBAR & COPY LINK)
         // ==========================================
-
-        // 1. SIDEBAR TOGGLE
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
 
@@ -117,13 +124,33 @@
         }
         overlay.addEventListener('click', toggleSidebar);
 
-        // 2. FORMATTER RUPIAH
+        function copyPublicLink() {
+            // Logic Share Link
+            const baseUrl = window.location.origin;
+            // Sesuaikan path jika folder public ada di root atau subfolder
+            // Asumsi: index.html dan folder public sejajar
+            const publicUrl = `${baseUrl}/public/transparansi.html`;
+            
+            navigator.clipboard.writeText(publicUrl).then(() => {
+                const btnText = document.getElementById('btnShareText');
+                const original = btnText.innerText;
+                btnText.innerText = "Link Disalin! ✅";
+                setTimeout(() => { btnText.innerText = original; }, 2000);
+            }).catch(err => {
+                alert("Gagal copy link: " + err);
+            });
+        }
+
+        // ==========================================
+        // BACKEND LOGIC (LOAD DATA)
+        // ==========================================
         const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
-        // 3. LOAD DATA DASHBOARD
         async function loadDashboardData() {
             try {
-                // A. Ambil Info Admin yg Login (untuk Avatar)
+                if (!window.supabaseClient) return;
+
+                // 1. Ambil Info Admin (Avatar)
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
                 if(user) {
                     const { data: profile } = await window.supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
@@ -133,49 +160,36 @@
                     }
                 }
 
-                // B. Hitung Total Pemasukan (Status PAID)
-                const { data: incomeData, error: errIncome } = await window.supabaseClient
-                    .from('transactions')
-                    .select('amount')
-                    .eq('status', 'PAID');
-                
+                // 2. Hitung Saldo (Total Masuk - Total Keluar)
+                const { data: incomeData } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
                 const totalMasuk = incomeData ? incomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
 
-                // C. Hitung Total Pengeluaran (Withdraw APPROVED)
-                // Note: Sesuaikan 'APPROVED' dengan ENUM withdraw_status di database kamu
-                const { data: outcomeData, error: errOutcome } = await window.supabaseClient
-                    .from('withdrawals')
-                    .select('amount')
-                    .eq('status', 'APPROVED'); 
-
+                const { data: outcomeData } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
                 const totalKeluar = outcomeData ? outcomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
 
-                // D. Hitung Pemasukan Bulan Ini
+                // 3. Hitung Pemasukan Bulan Ini
                 const date = new Date();
                 const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
-                
                 const { data: monthlyData } = await window.supabaseClient
                     .from('transactions')
                     .select('amount')
                     .eq('status', 'PAID')
                     .gte('created_at', firstDay);
-
                 const incomeThisMonth = monthlyData ? monthlyData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
 
-                // E. Hitung Total Member
+                // 4. Hitung Total Member
                 const { count: memberCount } = await window.supabaseClient
                     .from('profiles')
                     .select('*', { count: 'exact', head: true })
                     .eq('role', 'member');
 
-                // F. Update UI Statistik
+                // Update UI Statistik
                 document.getElementById('totalSaldo').innerText = formatRupiah(totalMasuk - totalKeluar);
                 document.getElementById('incomeMonth').innerText = formatRupiah(incomeThisMonth);
                 document.getElementById('totalMembers').innerText = (memberCount || 0) + " Org";
 
-                // G. Load 5 Transaksi Terakhir
-                // Kita perlu Join ke tabel profiles untuk dapat nama
-                const { data: recent, error: recentError } = await window.supabaseClient
+                // 5. Load 5 Transaksi Terakhir
+                const { data: recent } = await window.supabaseClient
                     .from('transactions')
                     .select('amount, created_at, payment_method, profiles:user_id(full_name)')
                     .eq('status', 'PAID')
@@ -194,8 +208,7 @@
                                 <div>
                                     <p class="text-sm font-bold text-slate-800">${tx.profiles?.full_name || 'Tanpa Nama'}</p>
                                     <p class="text-[10px] text-slate-400 font-medium">
-                                        ${new Date(tx.created_at).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})} • 
-                                        ${tx.payment_method}
+                                        ${new Date(tx.created_at).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})} • ${tx.payment_method}
                                     </p>
                                 </div>
                             </div>
