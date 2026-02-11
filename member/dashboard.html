@@ -6,10 +6,12 @@
     <title>Dashboard Saya | Nusaka</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
-    
-    <script src="member_guard.js"></script> 
-</head>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .animate-bounce-in { animation: bounceIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes bounceIn { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
+    <script src="member_guard.js"></script> </head>
 <body class="bg-[#F8FAFC] text-slate-600">
 
     <nav class="flex justify-between items-center p-6 max-w-5xl mx-auto">
@@ -19,20 +21,20 @@
 
     <main class="max-w-4xl mx-auto p-6 pb-20">
         <header class="mb-8">
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Halo, <span id="memberName" class="text-blue-600">...</span> 👋</h1>
-            <p class="text-slate-400 text-sm mt-1">Dashboard Pembayaran Kas</p>
+            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Halo, <span id="memberName" class="text-blue-600">...</span> 👋</h1>
+            <p class="text-slate-400 text-sm mt-1">Selamat datang di dashboard.</p>
         </header>
 
-        <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-10 mb-10 shadow-xl shadow-slate-100 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-10 mb-8 shadow-xl shadow-slate-100 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
             <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-50 rounded-full z-0"></div>
             
-            <div class="relative z-10 text-center md:text-left">
+            <div class="relative z-10 text-center md:text-left w-full md:w-auto">
                 <div class="inline-flex items-center gap-2 px-3 py-1 bg-red-50 text-red-600 rounded-full border border-red-100 mb-3">
                     <span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
                     <span class="text-[10px] font-bold uppercase tracking-widest">Tagihan Bulan Ini</span>
                 </div>
-                <h2 class="text-5xl font-black text-slate-900 tracking-tighter mb-1">Rp 10.000</h2>
-                <p class="text-slate-400 text-sm font-medium">Periode Saat Ini</p>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-1">Rp 10.000</h2>
+                <p class="text-slate-400 text-sm font-medium">Periode Februari 2026</p>
             </div>
 
             <button onclick="openPaymentModal()" class="relative z-10 w-full md:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-200 hover:shadow-blue-300 hover:scale-105 transition-all">
@@ -40,53 +42,30 @@
             </button>
         </div>
 
-        <a href="../public/transparansi.html" class="block bg-slate-900 text-white rounded-[2rem] p-6 mb-10 relative overflow-hidden hover:bg-slate-800 transition group">
-            <div class="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition"></div>
-            <div class="flex justify-between items-center relative z-10">
-                <div>
-                    <h3 class="text-lg font-bold">Lihat Transparansi Kas 📊</h3>
-                    <p class="text-slate-400 text-xs">Cek saldo dan riwayat uang masuk/keluar organisasi.</p>
-                </div>
-                <span class="bg-white/20 p-3 rounded-full">→</span>
-            </div>
-        </a>
+        <div class="bg-blue-50 border border-blue-100 p-6 rounded-[2rem] text-center text-sm text-blue-800">
+            <p>💡 <b>Info:</b> Untuk melihat transparansi keuangan organisasi, silakan hubungi Admin untuk mendapatkan link terpisah.</p>
+        </div>
 
     </main>
 
     <div id="paymentModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl relative animate-bounce-in text-center">
             <button onclick="closePaymentModal()" class="absolute top-6 right-6 text-slate-300 hover:text-slate-600 text-xl font-bold">✕</button>
-            
             <h3 class="text-xl font-bold text-slate-900 mb-2">Scan QRIS</h3>
-            <p class="text-xs text-slate-400 mb-6">Scan QR di bawah untuk membayar Rp 10.000</p>
+            <p class="text-xs text-slate-400 mb-6">Bayar tagihan sebesar Rp 10.000</p>
             
-            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 inline-block mb-6">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NusakaEduOnePayment" alt="QRIS" class="w-40 h-40 mix-blend-multiply">
-            </div>
-
-            <p class="text-xs font-bold text-slate-500 mb-4">Atau Transfer Manual:</p>
-            <div class="bg-blue-50 p-4 rounded-xl text-left mb-6">
-                <div class="flex justify-between text-xs mb-1">
-                    <span class="text-slate-500">Bank Jago</span>
-                    <span class="font-bold text-slate-800">1234 5678 9000</span>
-                </div>
-                <div class="flex justify-between text-xs">
-                    <span class="text-slate-500">A.N</span>
-                    <span class="font-bold text-slate-800">Bendahara Nusaka</span>
-                </div>
+            <div class="bg-slate-50 p-4 rounded-3xl border border-slate-200 inline-block mb-6">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=NusakaEduOne" alt="QRIS" class="w-40 h-40 mix-blend-multiply">
             </div>
 
             <button onclick="closePaymentModal()" class="w-full py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition">
-                Tutup / Saya Sudah Bayar
+                Tutup
             </button>
         </div>
     </div>
 
     <script>
-        // Set Nama Member dari Session
         document.getElementById('memberName').innerText = currentMember.full_name;
-
-        // Modal Logic
         function openPaymentModal() { document.getElementById('paymentModal').classList.remove('hidden'); }
         function closePaymentModal() { document.getElementById('paymentModal').classList.add('hidden'); }
     </script>

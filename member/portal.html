@@ -3,34 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Mahasiswa | Masuk</title>
-    
+    <title>Portal Member | Masuk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <script src="../config.js"></script> 
+    <script src="../config.js"></script>
 </head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
     
     <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
 
     <div class="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl shadow-slate-200/60 border border-white z-10 relative">
-        <div class="text-center mb-10">
+        <div class="text-center mb-8">
             <div class="text-xl font-bold text-blue-600 tracking-tighter mb-2">NUSAKA<span class="text-slate-800 text-xs italic">eduone</span></div>
             <h2 class="text-2xl font-bold text-slate-900">Portal Mahasiswa</h2>
-            <p class="text-slate-400 text-sm mt-1">Masuk untuk bayar kas & cek transparansi.</p>
+            <p class="text-slate-400 text-sm mt-1">Masuk untuk bayar kas & cek tagihan.</p>
         </div>
         
+        <div id="alertBox" class="hidden mb-6 p-4 rounded-xl text-xs font-bold text-center"></div>
+
         <form id="loginForm" class="space-y-5">
             <div>
                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 ml-1 tracking-widest">NIM</label>
-                <input type="text" id="nim" required placeholder="Contoh: 1225..." class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+                <input type="number" id="nim" required placeholder="Contoh: 1225..." class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
             </div>
             <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 ml-1 tracking-widest">PIN Akses</label>
+                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 ml-1 tracking-widest">PIN Keamanan</label>
                 <input type="password" id="pin" required placeholder="••••••" class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
             </div>
             <button type="submit" id="btnLogin" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 hover:scale-[0.98] transition-all">
@@ -38,22 +38,62 @@
             </button>
         </form>
         
-        <div id="errorMsg" class="mt-4 text-center text-xs text-red-500 font-bold bg-red-50 p-3 rounded-xl hidden"></div>
-
         <div class="mt-8 pt-6 border-t border-slate-50 text-center">
-             <a href="#" onclick="alert('Silakan hubungi Bendahara atau Admin untuk reset PIN.')" class="text-xs font-bold text-slate-400 hover:text-blue-600 transition">Lupa PIN? Hubungi Admin</a>
+             <a href="#" class="text-xs font-bold text-slate-400 hover:text-blue-600 transition">Lupa PIN? Hubungi Bendahara</a>
         </div>
     </div>
 
     <script>
+        // --- LOGIC ANTI BRUTE FORCE ---
+        const MAX_ATTEMPTS = 5;
+        const LOCKOUT_TIME = 30 * 60 * 1000; // 30 Menit
+
+        function checkLockout() {
+            const lockoutUntil = localStorage.getItem('portal_lockout_until');
+            if (lockoutUntil && Date.now() < lockoutUntil) {
+                const remaining = Math.ceil((lockoutUntil - Date.now()) / 60000);
+                showAlert(`Akun terkunci sementara. Coba lagi dalam ${remaining} menit.`, 'error');
+                document.getElementById('btnLogin').disabled = true;
+                document.getElementById('btnLogin').classList.add('opacity-50', 'cursor-not-allowed');
+                return true;
+            }
+            // Jika waktu habis, reset
+            if (lockoutUntil && Date.now() > lockoutUntil) {
+                localStorage.removeItem('portal_failed_attempts');
+                localStorage.removeItem('portal_lockout_until');
+                document.getElementById('btnLogin').disabled = false;
+                document.getElementById('btnLogin').classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+            return false;
+        }
+
+        function recordFailure() {
+            let attempts = parseInt(localStorage.getItem('portal_failed_attempts') || '0');
+            attempts++;
+            localStorage.setItem('portal_failed_attempts', attempts);
+
+            if (attempts >= MAX_ATTEMPTS) {
+                const lockoutUntil = Date.now() + LOCKOUT_TIME;
+                localStorage.setItem('portal_lockout_until', lockoutUntil);
+                checkLockout();
+            }
+        }
+
+        function showAlert(msg, type) {
+            const box = document.getElementById('alertBox');
+            box.innerText = msg;
+            box.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center ${type === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-500'}`;
+            box.classList.remove('hidden');
+        }
+
+        // --- LOGIN LOGIC ---
+        checkLockout(); // Cek saat load
+
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (checkLockout()) return;
+
             const btn = document.getElementById('btnLogin');
-            const msg = document.getElementById('errorMsg');
-            
-            // Reset UI
-            msg.classList.add('hidden');
-            const originalText = btn.innerText;
             btn.innerText = "Memeriksa...";
             btn.disabled = true;
 
@@ -61,35 +101,33 @@
             const pin = document.getElementById('pin').value.trim();
 
             try {
-                // PENTING: Pastikan config.js sudah dimuat
-                if (!window.supabaseClient) {
-                    throw new Error("Koneksi Database Gagal (Config Error).");
-                }
+                if (!window.supabaseClient) throw new Error("Config Error.");
 
-                // Cek Database Supabase
                 const { data, error } = await window.supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('nim', nim)
-                    .eq('access_key', pin) // Mencocokkan PIN
+                    .eq('access_key', pin)
                     .single();
 
                 if (error || !data) {
-                    throw new Error("NIM tidak ditemukan atau PIN salah!");
+                    recordFailure(); // Catat kegagalan
+                    throw new Error("NIM atau PIN salah!");
                 }
 
-                // Login Sukses: Simpan Session di LocalStorage
-                localStorage.setItem('nusaka_member_session', JSON.stringify(data));
+                // Sukses: Reset percobaan gagal
+                localStorage.removeItem('portal_failed_attempts');
+                localStorage.removeItem('portal_lockout_until');
                 
-                // Redirect ke Dashboard Member
-                // Karena kita di folder 'member', dashboard ada di folder yang sama
+                // Simpan Sesi
+                localStorage.setItem('nusaka_member_session', JSON.stringify(data));
                 window.location.href = 'dashboard.html';
 
             } catch (err) {
-                msg.innerText = err.message;
-                msg.classList.remove('hidden');
-                btn.innerText = originalText;
-                btn.disabled = false;
+                const attempts = localStorage.getItem('portal_failed_attempts') || 0;
+                showAlert(`${err.message} (Percobaan ${attempts}/${MAX_ATTEMPTS})`, 'error');
+                btn.innerText = "Masuk Sekarang";
+                if (!checkLockout()) btn.disabled = false;
             }
         });
     </script>
