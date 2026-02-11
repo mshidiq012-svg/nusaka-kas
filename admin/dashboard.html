@@ -135,7 +135,7 @@
             navigator.clipboard.writeText(portalUrl).then(() => {
                 const btnText = document.getElementById('btnShareText');
                 const original = btnText.innerText;
-                btnText.innerText = "Link Portal Disalin! ✅";
+                btnText.innerText = "Link Portal Disalin!";
                 setTimeout(() => { btnText.innerText = original; }, 2000);
             }).catch(err => {
                 alert("Gagal copy link: " + err);

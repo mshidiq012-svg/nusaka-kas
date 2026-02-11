@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Mahasiswa | Masuk</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script> </head>
+    
+    <script src="../config.js"></script> 
+</head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
     
     <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
@@ -35,10 +38,10 @@
             </button>
         </form>
         
-        <div id="errorMsg" class="mt-4 text-center text-xs text-red-500 font-bold hidden"></div>
+        <div id="errorMsg" class="mt-4 text-center text-xs text-red-500 font-bold bg-red-50 p-3 rounded-xl hidden"></div>
 
         <div class="mt-8 pt-6 border-t border-slate-50 text-center">
-             <a href="#" class="text-xs font-bold text-slate-400 hover:text-blue-600 transition">Lupa PIN? Hubungi Admin</a>
+             <a href="#" onclick="alert('Silakan hubungi Bendahara atau Admin untuk reset PIN.')" class="text-xs font-bold text-slate-400 hover:text-blue-600 transition">Lupa PIN? Hubungi Admin</a>
         </div>
     </div>
 
@@ -46,6 +49,10 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnLogin');
+            const msg = document.getElementById('errorMsg');
+            
+            // Reset UI
+            msg.classList.add('hidden');
             const originalText = btn.innerText;
             btn.innerText = "Memeriksa...";
             btn.disabled = true;
@@ -54,26 +61,31 @@
             const pin = document.getElementById('pin').value.trim();
 
             try {
+                // PENTING: Pastikan config.js sudah dimuat
+                if (!window.supabaseClient) {
+                    throw new Error("Koneksi Database Gagal (Config Error).");
+                }
+
                 // Cek Database Supabase
                 const { data, error } = await window.supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('nim', nim)
-                    .eq('access_key', pin) // Pastikan kolom access_key berisi PIN
+                    .eq('access_key', pin) // Mencocokkan PIN
                     .single();
 
                 if (error || !data) {
-                    throw new Error("NIM atau PIN salah!");
+                    throw new Error("NIM tidak ditemukan atau PIN salah!");
                 }
 
-                // Login Sukses: Simpan Session Sederhana di LocalStorage
+                // Login Sukses: Simpan Session di LocalStorage
                 localStorage.setItem('nusaka_member_session', JSON.stringify(data));
                 
                 // Redirect ke Dashboard Member
-                window.location.href = 'member/dashboard.html';
+                // Karena kita di folder 'member', dashboard ada di folder yang sama
+                window.location.href = 'dashboard.html';
 
             } catch (err) {
-                const msg = document.getElementById('errorMsg');
                 msg.innerText = err.message;
                 msg.classList.remove('hidden');
                 btn.innerText = originalText;
