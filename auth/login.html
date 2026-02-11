@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Masuk Admin | Nusakaeduone</title>
     
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <script src="../config.js"></script> 
+    <script src="../config.js"></script>  
 </head>
 <body class="bg-white h-screen flex overflow-hidden">
 
@@ -44,8 +42,7 @@
             </div>
 
             <form id="loginForm" class="space-y-5" autocomplete="off">
-                <div id="errorAlert" class="hidden p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 text-center">
-                    </div>
+                <div id="errorAlert" class="hidden p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 text-center"></div>
 
                 <div>
                     <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 tracking-widest ml-1">Email</label>
@@ -72,7 +69,6 @@
     </div>
 
     <script>
-        // INISIALISASI VARIABEL UI
         const loginForm = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passInput = document.getElementById('password');
@@ -81,7 +77,6 @@
         const btnText = document.getElementById('btnText');
         const btnLoader = document.getElementById('btnLoader');
 
-        // Fungsi menampilkan pesan (Aman dari XSS)
         function showError(msg) {
             errorAlert.textContent = msg; 
             errorAlert.classList.remove('hidden');
@@ -89,75 +84,59 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // 1. AMBIL KONEKSI DARI WINDOW (Yang dibuat di config.js)
             const supabase = window.supabaseClient;
 
-            // Jika config.js gagal load atau tidak ada
             if (!supabase) {
-                // Ini error teknis browser, boleh ditampilkan beda agar tau masalahnya di codingan
                 alert("Error Teknis: Config Database tidak terhubung. Cek config.js");
                 return;
             }
 
-            // 2. UI LOADING STATE
             btnSubmit.disabled = true;
             btnText.textContent = "Memverifikasi...";
             btnLoader.classList.remove('hidden');
-            errorAlert.classList.add('hidden'); // Sembunyikan error lama
+            errorAlert.classList.add('hidden');
 
             const email = emailInput.value.trim();
             const password = passInput.value;
 
             try {
-                // 3. COBA LOGIN (Try to Login)
+                // 1. LOGIN AUTH
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
 
-                // Jika ada error apapun dari Supabase (salah password, user tidak ada, dll)
-                if (error) throw error; 
+                if (error) throw new Error("Email atau Password salah.");
 
-                // 4. CEK ROLE (Hanya jika login auth berhasil)
+                // 2. CEK ROLE DI TABEL PROFILES
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('role')
                     .eq('id', data.user.id)
                     .single();
 
-                // Jika User ada di Auth, tapi tidak punya profil Admin/Superadmin
-                if (!profile || (profile.role !== 'admin' && profile.role !== 'superadmin')) {
-                    await supabase.auth.signOut(); // Tendang keluar
-                    throw new Error("Unauthorized"); // Lempar ke catch
-                }
+                if (!profile) throw new Error("Profil pengguna tidak ditemukan.");
 
-                // 5. SUKSES - REDIRECT
-                localStorage.setItem('user_role', profile.role);
-
+                // 3. ROUTING BERDASARKAN ROLE
                 if (profile.role === 'superadmin') {
+                    // Arahkan ke Folder Developer
                     window.location.href = '../developer/index.html';
+                } else if (profile.role === 'admin') {
+                    // Arahkan ke Folder Admin
+                    window.location.href = 'dashboard.html';
                 } else {
-                    window.location.href = '../admin/dashboard.html';
+                    // Jika member biasa mencoba login admin
+                    await supabase.auth.signOut();
+                    throw new Error("Akses Ditolak. Anda bukan pengurus.");
                 }
 
             } catch (err) {
-                // LOG DEBUG (Hanya muncul di Console Browser - Klik F12 untuk melihatnya)
-                // Ini penting buat kita tau error aslinya apa, tapi user tidak lihat.
-                console.error("Login Gagal (Debug):", err.message);
-
-                // ============================================================
-                // PESAN ERROR UNTUK USER (DISAMARKAN)
-                // ============================================================
-                // Apapun errornya (Database mati, password salah, hacker nyoba inject),
-                // User cuma lihat pesan ini:
-                showError("Email atau Password ada yang salah.");
-                
-                // Reset Tombol
+                console.error("Login Debug:", err.message);
+                showError(err.message);
                 btnSubmit.disabled = false;
                 btnText.textContent = "Masuk Dashboard";
                 btnLoader.classList.add('hidden');
-                passInput.value = ""; // Kosongkan password biar user ketik ulang
+                passInput.value = "";
             }
         });
     </script>
