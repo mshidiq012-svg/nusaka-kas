@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transparansi | Nusaka Public</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
@@ -16,32 +19,55 @@
     <div class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-3xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">N</div>
-                <div class="text-lg font-bold text-slate-900 tracking-tight">NUSAKA<span class="text-blue-600">open</span></div>
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <div class="text-lg font-extrabold text-slate-900 tracking-tight">NUSAKA<span class="text-blue-600">open</span></div>
             </div>
-            <span class="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-1 rounded">LIVE DATA</span>
+            <span class="text-[10px] font-bold bg-green-100 text-green-700 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></span> LIVE
+            </span>
         </div>
     </div>
 
     <main class="max-w-3xl mx-auto p-6 pb-20">
+        
         <div class="text-center py-6">
-            <h1 class="text-2xl font-extrabold text-slate-900">Transparansi Keuangan</h1>
-            <p class="text-slate-400 text-xs mt-1">Data real-time untuk kepercayaan bersama.</p>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Transparansi Keuangan</h1>
+            <p class="text-slate-400 text-xs mt-1 font-medium">Data real-time untuk kepercayaan bersama.</p>
         </div>
 
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2rem] p-8 text-white shadow-xl shadow-blue-200 relative overflow-hidden mb-8 text-center">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full mix-blend-overlay opacity-10 blur-3xl -mr-16 -mt-16"></div>
-            <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mb-2">Total Saldo Kas</p>
-            <h2 id="publicSaldo" class="text-4xl md:text-5xl font-black tracking-tight mb-4">Rp ...</h2>
-            <div class="text-[10px] text-blue-200 opacity-80">Update: <span id="lastUpdate">-</span></div>
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-blue-200 relative overflow-hidden mb-8 text-center group">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full mix-blend-overlay opacity-10 blur-3xl -mr-16 -mt-16 group-hover:scale-110 transition duration-1000"></div>
+            
+            <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mb-2 relative z-10">Total Saldo Kas</p>
+            <h2 id="publicSaldo" class="text-4xl md:text-5xl font-black tracking-tight mb-6 relative z-10">Rp ...</h2>
+            
+            <div class="grid grid-cols-2 gap-4 relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+                <div class="border-r border-white/10">
+                    <p class="text-[10px] text-emerald-200 uppercase font-bold mb-1">Total Pemasukan</p>
+                    <p id="totalIn" class="text-lg font-bold text-emerald-100">Rp ...</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-rose-200 uppercase font-bold mb-1">Total Pengeluaran</p>
+                    <p id="totalOut" class="text-lg font-bold text-rose-100">Rp ...</p>
+                </div>
+            </div>
+
+            <div class="text-[10px] text-blue-200 opacity-80 mt-4">Terakhir diperbarui: <span id="lastUpdate">-</span></div>
         </div>
 
-        <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-6 border-b border-slate-50 font-bold text-slate-900">Dana Masuk Terakhir</div>
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-slate-50 bg-slate-50/50">
+                <h3 class="font-bold text-slate-900 text-lg">Mutasi Terakhir</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Gabungan uang masuk & keluar.</p>
+            </div>
+            
             <div id="publicTxList" class="divide-y divide-slate-50">
-                <div class="p-8 text-center text-slate-400 text-sm italic animate-pulse">Memuat data...</div>
+                <div class="p-10 text-center text-slate-400 text-sm italic animate-pulse">Sedang memuat data...</div>
             </div>
         </div>
+
     </main>
 
     <script>
@@ -51,46 +77,114 @@
             if (!window.supabaseClient) return;
 
             try {
-                // 1. HITUNG SALDO
+                // 1. HITUNG SALDO & TOTAL
                 const { data: inc } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
                 const { data: out } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
                 
-                const totalIn = inc?.reduce((a, b) => a + b.amount, 0) || 0;
-                const totalOut = out?.reduce((a, b) => a + b.amount, 0) || 0;
+                const totalInAmount = inc?.reduce((a, b) => a + b.amount, 0) || 0;
+                const totalOutAmount = out?.reduce((a, b) => a + b.amount, 0) || 0;
                 
-                document.getElementById('publicSaldo').innerText = formatRupiah(totalIn - totalOut);
+                document.getElementById('publicSaldo').innerText = formatRupiah(totalInAmount - totalOutAmount);
+                document.getElementById('totalIn').innerText = formatRupiah(totalInAmount);
+                document.getElementById('totalOut').innerText = formatRupiah(totalOutAmount);
                 document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString('id-ID');
 
-                // 2. RIWAYAT (Limit 10)
+                // 2. GABUNGKAN RIWAYAT (MASUK & KELUAR)
+                // Ambil 5 Transaksi Masuk Terakhir
                 const { data: txList } = await window.supabaseClient
                     .from('transactions')
-                    .select('amount, created_at, payment_method, profiles(full_name)')
+                    .select('amount, created_at, payment_method, tripay_reference, profiles(full_name)')
                     .eq('status', 'PAID')
                     .order('created_at', { ascending: false })
-                    .limit(10);
+                    .limit(5);
 
+                // Ambil 5 Pengeluaran Terakhir
+                const { data: wdList } = await window.supabaseClient
+                    .from('withdrawals')
+                    .select('amount, created_at, description')
+                    .eq('status', 'APPROVED')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                // Gabungkan Array, Beri Label Tipe, dan Sortir Ulang berdasarkan Tanggal
+                let combined = [];
+                
+                if (txList) {
+                    txList.forEach(item => {
+                        combined.push({
+                            type: 'IN',
+                            amount: item.amount,
+                            date: new Date(item.created_at),
+                            desc: item.tripay_reference || 'Iuran Kas',
+                            name: item.profiles?.full_name || 'Hamba Allah',
+                            method: item.payment_method
+                        });
+                    });
+                }
+
+                if (wdList) {
+                    wdList.forEach(item => {
+                        combined.push({
+                            type: 'OUT',
+                            amount: item.amount,
+                            date: new Date(item.created_at),
+                            desc: item.description || 'Pengeluaran',
+                            name: 'Pengurus',
+                            method: 'Withdraw'
+                        });
+                    });
+                }
+
+                // Sortir dari yang paling baru
+                combined.sort((a, b) => b.date - a.date);
+
+                // Render ke HTML
                 const container = document.getElementById('publicTxList');
-                if (txList && txList.length > 0) {
-                    container.innerHTML = txList.map(tx => {
-                        let name = "Hamba Allah";
-                        if (tx.profiles?.full_name) { // Sensor Nama
-                            const parts = tx.profiles.full_name.split(' ');
-                            name = parts[0] + (parts.length > 1 ? " " + parts[1][0] + "***" : "***");
+                
+                if (combined.length > 0) {
+                    container.innerHTML = combined.map(item => {
+                        // Sensor Nama untuk Privasi
+                        let displayName = item.name;
+                        if (item.type === 'IN' && displayName !== 'Hamba Allah') {
+                            const parts = displayName.split(' ');
+                            displayName = parts[0] + (parts.length > 1 ? " " + parts[1][0] + "***" : "***");
                         }
+
+                        // Tentukan Warna & Ikon
+                        const isIncome = item.type === 'IN';
+                        const amountColor = isIncome ? 'text-emerald-600' : 'text-rose-600';
+                        const amountPrefix = isIncome ? '+' : '-';
+                        const iconBg = isIncome ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
+                        const iconSvg = isIncome 
+                            ? `<path d="M12 19V5"/><path d="M5 12l7-7 7 7"/>` // Panah Atas
+                            : `<path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/>`; // Panah Bawah
+
                         return `
-                        <div class="flex items-center justify-between p-5 hover:bg-slate-50">
-                            <div>
-                                <p class="font-bold text-slate-800 text-sm">${name}</p>
-                                <p class="text-[10px] text-slate-400">${new Date(tx.created_at).toLocaleDateString('id-ID')} • ${tx.payment_method}</p>
+                        <div class="flex items-center justify-between p-5 hover:bg-slate-50 transition group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-2xl ${iconBg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${iconSvg}</svg>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-800 text-sm mb-0.5">${displayName}</p>
+                                    <p class="text-xs text-slate-500 font-medium line-clamp-1">${item.desc}</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">
+                                        ${item.date.toLocaleDateString('id-ID', {day:'numeric', month:'short'})} • ${item.method}
+                                    </p>
+                                </div>
                             </div>
-                            <span class="text-sm font-bold text-emerald-600">+${formatRupiah(tx.amount)}</span>
+                            <span class="text-sm font-extrabold ${amountColor} whitespace-nowrap">
+                                ${amountPrefix} ${formatRupiah(item.amount)}
+                            </span>
                         </div>`;
                     }).join('');
                 } else {
-                    container.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">Belum ada data.</div>`;
+                    container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Belum ada data transaksi.</div>`;
                 }
+
             } catch (err) { console.error(err); }
         }
+        
         loadData();
     </script>
 </body>
