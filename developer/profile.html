@@ -103,7 +103,7 @@
         async function init() {
             if(!window.supabaseClient) return;
             const { data: { user } } = await window.supabaseClient.auth.getUser();
-            if(!user) { window.location.href = '/admin/login.html'; return; }
+            if(!user) { window.location.href = '/auth/login.html'; return; }
             document.getElementById('devEmail').innerText = user.email;
         }
 
@@ -134,7 +134,7 @@
 
         async function logoutDev() {
             await window.supabaseClient.auth.signOut();
-            window.location.href = '/admin/login.html';
+            window.location.href = '/auth/login.html';
         }
 
         init();
