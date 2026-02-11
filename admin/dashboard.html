@@ -3,87 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin</title>
+    <title>Dashboard Admin | Nusaka Kas</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .sidebar-transition { transition: transform 0.3s ease-in-out; }
+    </style>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script src="../config.js"></script>
     <script src="../auth_guard.js"></script>
 </head>
 <body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen">
 
-    <aside class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 hidden lg:flex flex-col">
-        <div class="text-2xl font-bold text-blue-600 mb-10 px-2">NUSAKA<span class="text-slate-800 text-sm italic">admin</span></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col">
+        <div class="flex items-center justify-between mb-10 px-2">
+            <div class="text-2xl font-bold text-blue-600 tracking-tighter">NUSAKA<span class="text-slate-800 text-sm italic">admin</span></div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
         <nav class="space-y-2 flex-1">
-            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-xl font-bold">Dashboard</a>
-            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold">Anggota</a>
-            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold">Transaksi</a>
-            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold">Withdraw</a>
-            <a href="profile.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold">Profile</a>
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-xl font-bold shadow-sm transition">
+                Dashboard
+            </a>
+            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
+                Anggota
+            </a>
+            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
+                Transaksi
+            </a>
+            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
+                Withdraw
+            </a>
+            <a href="profile.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
+                Profile Saya
+            </a>
         </nav>
-        <button onclick="logout()" class="text-red-500 font-bold px-4">Logout</button>
+
+        <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl font-bold transition text-sm w-full text-left">
+            Logout
+        </button>
     </aside>
 
-    <main class="flex-1 lg:ml-72 p-6 lg:p-10">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
-                <p class="text-sm text-slate-400">Pusat kontrol keuangan.</p>
+    <main class="flex-1 lg:ml-72 flex flex-col min-h-screen">
+        
+        <header class="sticky top-0 bg-[#F8FAFC]/80 backdrop-blur-md z-20 px-6 py-4 lg:px-10 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 lg:border-none gap-4">
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-lg border border-slate-200 shadow-sm text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                </button>
+                <div>
+                    <h1 class="text-xl lg:text-2xl font-bold text-slate-900">Ringkasan Kas</h1>
+                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Monitoring keuangan organisasi secara real-time.</p>
+                </div>
             </div>
             
-            <div class="flex gap-3">
-                <button onclick="copyLink('member')" id="btnMember" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold hover:bg-blue-50 hover:text-blue-600 transition shadow-sm flex items-center gap-2">
-                    🔗 Link Portal Member
+            <div class="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
+                
+                <button onclick="copyLink('portal')" id="btnPortal" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-sm whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                    <span>Link Portal</span>
                 </button>
-                <button onclick="copyLink('public')" id="btnPublic" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold hover:bg-green-50 hover:text-green-600 transition shadow-sm flex items-center gap-2">
-                    🌍 Link Transparansi
+
+                <button onclick="copyLink('public')" id="btnPublic" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-sm whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Link Publik</span>
                 </button>
+
+                <a href="profile.html" id="adminAvatar" class="w-10 h-10 bg-blue-100 rounded-full flex-shrink-0 flex items-center justify-center text-blue-600 font-bold text-sm cursor-pointer hover:ring-4 hover:ring-blue-50 transition border-2 border-white shadow-sm">
+                    ...
+                </a>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                <p class="text-xs font-bold text-slate-400 uppercase">Saldo Kas</p>
-                <h3 id="dashSaldo" class="text-3xl font-black text-slate-900">Rp ...</h3>
-            </div>
+        <div class="p-6 lg:p-10 space-y-8">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-110 transition"></div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Saldo Kas</p>
+                    <h3 id="totalSaldo" class="text-3xl font-black text-slate-900 tracking-tight">Rp ...</h3>
+                </div>
+
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full opacity-50 group-hover:scale-110 transition"></div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Masuk Bulan Ini</p>
+                    <h3 id="incomeMonth" class="text-3xl font-black text-slate-900 tracking-tight">Rp ...</h3>
+                </div>
+
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group sm:col-span-2 lg:col-span-1">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-50 rounded-full opacity-50 group-hover:scale-110 transition"></div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Anggota</p>
+                    <h3 id="totalMembers" class="text-3xl font-black text-slate-900 tracking-tight">... Org</h3>
+                </div>
             </div>
 
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 p-6 lg:p-8 shadow-sm">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="font-bold text-slate-900">Aktivitas Terakhir</h3>
+                    <a href="transaksi.html" class="text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition">Lihat Semua →</a>
+                </div>
+                <div id="recentTxList" class="space-y-6">
+                    <p class="text-center text-slate-400 text-sm py-4 italic animate-pulse">Memuat data transaksi...</p>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
-        const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+        // ==========================================
+        // UI HELPERS (SIDEBAR & COPY LINK)
+        // ==========================================
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
 
-        // FITUR COPY 2 LINK TERPISAH
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+        overlay.addEventListener('click', toggleSidebar);
+
         function copyLink(type) {
             const baseUrl = window.location.origin;
-            let url = "", btnId = "";
+            let url = "";
+            let btnId = "";
+            let originalContent = "";
 
-            if (type === 'member') {
+            if (type === 'portal') {
                 url = `${baseUrl}/member/portal.html`;
-                btnId = 'btnMember';
+                btnId = 'btnPortal';
             } else {
                 url = `${baseUrl}/public/transparansi.html`;
                 btnId = 'btnPublic';
             }
 
+            const btn = document.getElementById(btnId);
+            originalContent = btn.innerHTML; // Simpan ikon dan teks asli
+
             navigator.clipboard.writeText(url).then(() => {
-                const btn = document.getElementById(btnId);
-                const original = btn.innerText;
-                btn.innerText = "Disalin! ✅";
-                setTimeout(() => { btn.innerText = original; }, 2000);
+                // Ubah teks tanpa ikon centang (Hanya teks "Tersalin")
+                btn.innerHTML = `<span class="text-green-600">Tersalin!</span>`;
+                
+                setTimeout(() => { 
+                    btn.innerHTML = originalContent; // Kembalikan ke tampilan awal
+                }, 2000);
+            }).catch(err => {
+                alert("Gagal copy link: " + err);
             });
         }
 
-        // Load Saldo Cepat
-        async function loadSaldo() {
-            if(!window.supabaseClient) return;
-            const { data: inc } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
-            const { data: out } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
-            const total = (inc?.reduce((a,b)=>a+b.amount,0)||0) - (out?.reduce((a,b)=>a+b.amount,0)||0);
-            document.getElementById('dashSaldo').innerText = formatRupiah(total);
+        // ==========================================
+        // BACKEND LOGIC (LOAD DATA)
+        // ==========================================
+        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+
+        async function loadDashboardData() {
+            try {
+                if (!window.supabaseClient) return;
+
+                // 1. Ambil Info Admin (Avatar)
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if(user) {
+                    const { data: profile } = await window.supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
+                    if(profile) {
+                        const initials = profile.full_name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+                        document.getElementById('adminAvatar').innerText = initials;
+                    }
+                }
+
+                // 2. Hitung Saldo (Total Masuk - Total Keluar)
+                const { data: incomeData } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
+                const totalMasuk = incomeData ? incomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
+
+                const { data: outcomeData } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
+                const totalKeluar = outcomeData ? outcomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
+
+                // 3. Hitung Pemasukan Bulan Ini
+                const date = new Date();
+                const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
+                const { data: monthlyData } = await window.supabaseClient
+                    .from('transactions')
+                    .select('amount')
+                    .eq('status', 'PAID')
+                    .gte('created_at', firstDay);
+                const incomeThisMonth = monthlyData ? monthlyData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
+
+                // 4. Hitung Total Member
+                const { count: memberCount } = await window.supabaseClient
+                    .from('profiles')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('role', 'member');
+
+                // Update UI Statistik
+                document.getElementById('totalSaldo').innerText = formatRupiah(totalMasuk - totalKeluar);
+                document.getElementById('incomeMonth').innerText = formatRupiah(incomeThisMonth);
+                document.getElementById('totalMembers').innerText = (memberCount || 0) + " Org";
+
+                // 5. Load 5 Transaksi Terakhir
+                const { data: recent } = await window.supabaseClient
+                    .from('transactions')
+                    .select('amount, created_at, payment_method, profiles:user_id(full_name)')
+                    .eq('status', 'PAID')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                const listContainer = document.getElementById('recentTxList');
+                
+                if (recent && recent.length > 0) {
+                    listContainer.innerHTML = recent.map(tx => `
+                        <div class="flex justify-between items-center group border-b border-slate-50 pb-4 last:border-0">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-2xl ${tx.payment_method === 'TRIPAY' ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'} flex items-center justify-center font-bold text-xs transition-transform group-hover:scale-110">
+                                    ${tx.profiles?.full_name ? tx.profiles.full_name.substring(0,2).toUpperCase() : '??'}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold text-slate-800">${tx.profiles?.full_name || 'Tanpa Nama'}</p>
+                                    <p class="text-[10px] text-slate-400 font-medium">
+                                        ${new Date(tx.created_at).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})} • ${tx.payment_method}
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="text-sm font-extrabold text-emerald-600">+ ${formatRupiah(tx.amount)}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    listContainer.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi.</p>`;
+                }
+
+            } catch (err) {
+                console.error("Dashboard Error:", err);
+            }
         }
-        loadSaldo();
+
+        // Jalankan saat load
+        loadDashboardData();
+
     </script>
 </body>
 </html>
