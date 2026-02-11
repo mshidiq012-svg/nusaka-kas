@@ -61,14 +61,14 @@
                 </button>
                 <div>
                     <h1 class="text-xl lg:text-2xl font-bold text-slate-900">Ringkasan Kas</h1>
-                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Monitoring keuangan organisasi secara real-time.</p>
+                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Monitoring keuangan organisasi.</p>
                 </div>
             </div>
             
             <div class="flex items-center gap-3">
-                <button onclick="copyPublicLink()" class="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-sm group">
+                <button onclick="copyPortalLink()" class="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-sm group">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400 group-hover:text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
-                    <span id="btnShareText">Bagikan Transparansi</span>
+                    <span id="btnShareText">Bagikan Akses Portal</span>
                 </button>
 
                 <a href="profile.html" id="adminAvatar" class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm cursor-pointer hover:ring-4 hover:ring-blue-50 transition border-2 border-white shadow-sm">
@@ -124,17 +124,16 @@
         }
         overlay.addEventListener('click', toggleSidebar);
 
-        function copyPublicLink() {
-            // Logic Share Link
+        function copyPortalLink() {
+            // Logic Share Link ke Portal Login
             const baseUrl = window.location.origin;
-            // Sesuaikan path jika folder public ada di root atau subfolder
-            // Asumsi: index.html dan folder public sejajar
-            const publicUrl = `${baseUrl}/public/transparansi.html`;
+            // Ini akan mengarahkan ke halaman portal.html di root
+            const portalUrl = `${baseUrl}/portal.html`;
             
-            navigator.clipboard.writeText(publicUrl).then(() => {
+            navigator.clipboard.writeText(portalUrl).then(() => {
                 const btnText = document.getElementById('btnShareText');
                 const original = btnText.innerText;
-                btnText.innerText = "Link Disalin! ✅";
+                btnText.innerText = "Link Portal Disalin!";
                 setTimeout(() => { btnText.innerText = original; }, 2000);
             }).catch(err => {
                 alert("Gagal copy link: " + err);
@@ -161,9 +160,11 @@
                 }
 
                 // 2. Hitung Saldo (Total Masuk - Total Keluar)
+                // Masuk: Transaksi status PAID
                 const { data: incomeData } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
                 const totalMasuk = incomeData ? incomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
 
+                // Keluar: Withdraw status APPROVED
                 const { data: outcomeData } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
                 const totalKeluar = outcomeData ? outcomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
 
