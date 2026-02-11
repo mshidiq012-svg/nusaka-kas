@@ -10,7 +10,8 @@
     <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../config.js"></script>  
+    
+    <script src="/config.js"></script>  
 </head>
 <body class="bg-white h-screen flex overflow-hidden">
 
@@ -63,12 +64,13 @@
             </form>
 
             <div class="mt-8 text-center">
-                <a href="../index.html" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition">← Kembali ke Halaman Utama</a>
+                <a href="/index.html" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition">← Kembali ke Halaman Utama</a>
             </div>
         </div>
     </div>
 
     <script>
+        // --- LOGIC AUTHENTICATION ---
         const loginForm = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passInput = document.getElementById('password');
@@ -84,13 +86,15 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Cek koneksi Supabase
             const supabase = window.supabaseClient;
-
             if (!supabase) {
-                alert("Error Teknis: Config Database tidak terhubung. Cek config.js");
+                alert("Error Teknis: Config Database tidak terhubung. Pastikan config.js ada di root folder.");
                 return;
             }
 
+            // State Loading
             btnSubmit.disabled = true;
             btnText.textContent = "Memverifikasi...";
             btnLoader.classList.remove('hidden');
@@ -100,7 +104,7 @@
             const password = passInput.value;
 
             try {
-                // 1. LOGIN AUTH
+                // 1. LOGIN KE SUPABASE AUTH
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -108,24 +112,32 @@
 
                 if (error) throw new Error("Email atau Password salah.");
 
-                // 2. CEK ROLE DI TABEL PROFILES
+                // 2. CEK ROLE DI DATABASE (Tabel Profiles)
+                // Kita perlu tahu siapa yg login (Admin atau Superadmin)
                 const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('role')
                     .eq('id', data.user.id)
                     .single();
 
-                if (!profile) throw new Error("Profil pengguna tidak ditemukan.");
+                if (!profile) throw new Error("Profil pengguna tidak ditemukan di database.");
 
-                // 3. ROUTING BERDASARKAN ROLE
+                // 3. SIMPAN ROLE KE LOCALSTORAGE (Untuk keperluan Auth Guard nanti)
+                localStorage.setItem('user_role', profile.role);
+
+                // 4. ROUTING / PENGALIHAN HALAMAN (Sesuai Role)
+                // Menggunakan tanda "/" di depan agar path absolut dari root domain
+                
                 if (profile.role === 'superadmin') {
-                    // Arahkan ke Folder Developer
-                    window.location.href = '../developer/index.html';
-                } else if (profile.role === 'admin') {
-                    // Arahkan ke Folder Admin
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // Jika member biasa mencoba login admin
+                    // JIKA SUPERADMIN -> Masuk ke Folder Developer
+                    window.location.href = '/developer/index.html';
+                } 
+                else if (profile.role === 'admin') {
+                    // JIKA ADMIN -> Masuk ke Folder Admin
+                    window.location.href = '/admin/dashboard.html';
+                } 
+                else {
+                    // JIKA MEMBER ISENG -> Tendang Keluar
                     await supabase.auth.signOut();
                     throw new Error("Akses Ditolak. Anda bukan pengurus.");
                 }
@@ -133,6 +145,8 @@
             } catch (err) {
                 console.error("Login Debug:", err.message);
                 showError(err.message);
+                
+                // Reset Tombol
                 btnSubmit.disabled = false;
                 btnText.textContent = "Masuk Dashboard";
                 btnLoader.classList.add('hidden');
