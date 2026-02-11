@@ -61,7 +61,7 @@
                 </button>
                 <div>
                     <h1 class="text-xl lg:text-2xl font-bold text-slate-900">Ringkasan Kas</h1>
-                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Monitoring keuangan organisasi.</p>
+                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Monitoring keuangan organisasi secara real-time.</p>
                 </div>
             </div>
             
@@ -125,15 +125,17 @@
         overlay.addEventListener('click', toggleSidebar);
 
         function copyPortalLink() {
-            // Logic Share Link ke Portal Login
+            // Logic Share Link
             const baseUrl = window.location.origin;
-            // Ini akan mengarahkan ke halaman portal.html di root
-            const portalUrl = `${baseUrl}member/portal.html`;
+            
+            // PERBAIKAN: Menambahkan /member/ sebelum portal.html
+            // Hasil: https://nama-domain.com/member/portal.html
+            const portalUrl = `${baseUrl}/member/portal.html`;
             
             navigator.clipboard.writeText(portalUrl).then(() => {
                 const btnText = document.getElementById('btnShareText');
                 const original = btnText.innerText;
-                btnText.innerText = "Link Portal Disalin!";
+                btnText.innerText = "Link Portal Disalin! ✅";
                 setTimeout(() => { btnText.innerText = original; }, 2000);
             }).catch(err => {
                 alert("Gagal copy link: " + err);
@@ -160,11 +162,9 @@
                 }
 
                 // 2. Hitung Saldo (Total Masuk - Total Keluar)
-                // Masuk: Transaksi status PAID
                 const { data: incomeData } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
                 const totalMasuk = incomeData ? incomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
 
-                // Keluar: Withdraw status APPROVED
                 const { data: outcomeData } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
                 const totalKeluar = outcomeData ? outcomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
 
