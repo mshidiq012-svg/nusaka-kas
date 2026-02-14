@@ -10,13 +10,11 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; } 
         .animate-pop { animation: popUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); } 
         @keyframes popUp { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } } 
-        .scan-line { position: absolute; width: 100%; height: 3px; background: #22c55e; top: 0; animation: scanning 1.5s infinite linear; box-shadow: 0 0 10px #22c55e; } 
-        @keyframes scanning { 0% {top: 0;} 50% {top: 100%;} 100% {top: 0;} } 
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <script src="../config.js"></script>
     <script src="member_guard.js"></script> 
-    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js'></script>
 </head>
 <body class="bg-[#F8FAFC] text-slate-600">
 
@@ -97,7 +95,7 @@
                 </div>
                 <div class="flex gap-3">
                     <button onclick="resetUI()" class="flex-1 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-xs hover:bg-slate-50 transition">Ganti Foto</button>
-                    <button onclick="processUpload()" class="flex-[2] py-3 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Kirim Bukti ✓</button>
+                    <button onclick="processUpload()" id="btnKirimBukti" class="flex-[2] py-3 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Kirim & Validasi ✓</button>
                 </div>
             </div>
 
@@ -106,8 +104,8 @@
                     <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
                     <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900 mb-1">Mengirim...</h3>
-                <p class="text-xs text-slate-400 animate-pulse">Sistem sedang membaca nominal...</p>
+                <h3 class="text-lg font-bold text-slate-900 mb-1">Memproses...</h3>
+                <p id="loadingText" class="text-xs text-slate-400 animate-pulse">Sistem sedang membaca tulisan (OCR)...</p>
             </div>
 
             <div id="resultStep" class="hidden text-center pt-2">
@@ -121,10 +119,10 @@
 
     <script>
         const BASE_FEE = 10000;
-        const DEADLINE_DATE = 28; // TANGGAL 28
+        const DEADLINE_DATE = 28; 
         const LATE_FEE = 500;
         let currentBill = 0;
-        let selectedFile = null; // Menyimpan file sementara
+        let selectedFile = null;
 
         function initDashboard() {
             if(!window.currentMember) return;
@@ -135,7 +133,6 @@
         if (window.currentMember) initDashboard();
         else window.addEventListener('memberLoaded', initDashboard);
 
-        // --- 1. LOGIKA TAGIHAN (UPDATED) ---
         async function checkBill() {
             if(!window.supabaseClient || !window.currentMember) return;
             const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
@@ -144,15 +141,7 @@
                 const now = new Date();
                 const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
                 
-                // Cek apakah ada transaksi LUNAS (PAID) atau SEDANG DICEK (PENDING) bulan ini
-                const { data, error } = await window.supabaseClient
-                    .from('transactions')
-                    .select('status')
-                    .eq('user_id', window.currentMember.id)
-                    .gte('created_at', startMonth)
-                    .in('status', ['PAID', 'PENDING']); // Kita ambil Pending juga
-
-                if(error) throw error;
+                const { data } = await window.supabaseClient.from('transactions').select('status').eq('user_id', window.currentMember.id).gte('created_at', startMonth).in('status', ['PAID', 'PENDING']);
 
                 const badge = document.getElementById('statusBadge');
                 const bg = document.getElementById('cardBg');
@@ -160,31 +149,25 @@
                 const detail = document.getElementById('billDetail');
                 const amount = document.getElementById('billAmount');
 
-                // Jika ada data (Entah PAID atau PENDING)
                 if(data && data.length > 0) {
                     const status = data[0].status;
-
                     if (status === 'PAID') {
-                        // KONDISI 1: SUDAH LUNAS
                         amount.innerText = "LUNAS";
                         detail.innerHTML = "Terima kasih, pembayaran diterima.";
                         badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full border border-green-100 mb-4";
                         badge.innerHTML = `<span class="text-[10px] font-bold uppercase tracking-widest">Bulan Ini Aman</span>`;
                         bg.className = "absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-green-50 to-emerald-50 rounded-full z-0 transition duration-500 blur-2xl opacity-70";
-                        btn.classList.add('hidden'); // Sembunyikan tombol bayar
+                        btn.classList.add('hidden');
                     } else {
-                        // KONDISI 2: MENUNGGU ADMIN (PENDING)
                         amount.innerText = "DIPROSES";
                         detail.innerHTML = "Admin sedang mengecek bukti bayar.";
                         badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-50 text-yellow-600 rounded-full border border-yellow-100 mb-4";
                         badge.innerHTML = `<span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Menunggu Konfirmasi</span>`;
                         bg.className = "absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-full z-0 transition duration-500 blur-2xl opacity-70";
-                        btn.classList.add('hidden'); // Sembunyikan tombol bayar juga biar gak double
+                        btn.classList.add('hidden');
                     }
-                    
                     currentBill = 0;
                 } else {
-                    // KONDISI 3: BELUM BAYAR (TAGIHAN MUNCUL)
                     const today = now.getDate();
                     let fine = 0;
                     if(today > DEADLINE_DATE) fine = (today - DEADLINE_DATE) * LATE_FEE;
@@ -201,12 +184,11 @@
                         badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full border border-blue-100 mb-4";
                         badge.innerHTML = `<span class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Tagihan Aktif</span>`;
                     }
-                    btn.classList.remove('hidden'); // Tampilkan tombol
+                    btn.classList.remove('hidden');
                 }
-            } catch(err) { console.error("Gagal cek tagihan:", err); }
+            } catch(err) { console.error(err); }
         }
 
-        // --- 2. QRIS LOAD ---
         async function fetchQR() {
             try {
                 const { data } = await window.supabaseClient.from('app_settings').select('value').eq('key', 'qris_url').maybeSingle();
@@ -216,18 +198,8 @@
             } catch(e) { console.error(e); }
         }
 
-        // --- 3. MODAL & PREVIEW LOGIC (INI YANG PENTING) ---
-        function openPaymentModal() { 
-            document.getElementById('paymentModal').classList.remove('hidden'); 
-            resetUI(); 
-            fetchQR(); 
-        }
-        
-        function closeModal() { 
-            document.getElementById('paymentModal').classList.add('hidden'); 
-            checkBill(); // Refresh status tagihan saat tutup
-        }
-
+        function openPaymentModal() { document.getElementById('paymentModal').classList.remove('hidden'); resetUI(); fetchQR(); }
+        function closeModal() { document.getElementById('paymentModal').classList.add('hidden'); checkBill(); }
         function resetUI() { 
             document.getElementById('scanStep').classList.remove('hidden'); 
             document.getElementById('previewStep').classList.add('hidden');
@@ -237,15 +209,12 @@
             selectedFile = null;
         }
 
-        // Saat user pilih file, JANGAN langsung upload. Preview dulu.
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 selectedFile = input.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('imgPreviewResult').src = e.target.result;
-                    
-                    // Pindah Tampilan
                     document.getElementById('scanStep').classList.add('hidden');
                     document.getElementById('previewStep').classList.remove('hidden');
                 }
@@ -253,53 +222,63 @@
             }
         }
 
-        // --- 4. PROSES UPLOAD (Setelah klik tombol Kirim) ---
+        // --- INI LOGIKA OCR + UPLOAD (AUTO CHECK) ---
         async function processUpload() {
             if (!selectedFile) return;
+            const btn = document.getElementById('btnKirimBukti');
+            btn.disabled = true; btn.innerText = "Memproses...";
 
-            // Tampilan Loading
             document.getElementById('previewStep').classList.add('hidden');
             document.getElementById('processStep').classList.remove('hidden');
 
+            let finalStatus = 'PENDING'; // Default jika OCR gagal/ragu
+
             try {
-                // Compress dulu biar hemat kuota storage
                 const compressed = await compressImage(selectedFile);
-                
-                // OCR Logic (Tetap dipakai)
-                const worker = await Tesseract.createWorker('eng');
-                const { data: { text } } = await worker.recognize(compressed);
-                await worker.terminate();
 
-                const lower = text.toLowerCase();
-                // Deteksi nominal (Ribuan/Polos)
-                const baseBillStr = Math.floor(currentBill/1000).toString(); 
-                const isAmountOk = lower.includes(baseBillStr) || lower.includes(currentBill.toString());
-                const isSuccess = lower.includes('berhasil') || lower.includes('sukses') || lower.includes('success') || lower.includes('paid');
+                // 1. COBA OCR (Scan Tulisan)
+                try {
+                    const worker = await Tesseract.createWorker('eng');
+                    const ret = await worker.recognize(compressed);
+                    await worker.terminate();
 
-                // Jika OCR bilang OK -> PAID, jika ragu -> PENDING
-                let finalStatus = 'PENDING'; // Default ke Pending (Aman)
-                if (isAmountOk && isSuccess) {
-                    finalStatus = 'PAID';
+                    const text = ret.data.text.toLowerCase();
+                    console.log("Hasil OCR:", text); // Cek di console browser
+
+                    // Kata kunci sukses
+                    const isSuccess = text.includes('berhasil') || text.includes('sukses') || text.includes('success') || text.includes('paid');
+                    
+                    // Kata kunci nominal (Sederhana)
+                    // Cek apakah ada angka 10 (dari 10.000) atau nominal tagihan
+                    const amountStr = Math.floor(currentBill/1000).toString(); // misal "10"
+                    const isAmount = text.includes(amountStr) || text.includes(currentBill.toString());
+
+                    if (isSuccess && isAmount) {
+                        finalStatus = 'PAID'; // LUNAS OTOMATIS
+                    }
+                } catch (ocrErr) {
+                    console.warn("OCR Gagal, lanjut upload sebagai PENDING.", ocrErr);
+                    // Tidak throw error, lanjut saja upload manual
                 }
-
-                // Upload ke Supabase
+                
+                document.getElementById('loadingText').innerText = "Mengupload bukti ke server...";
+                
+                // 2. Upload ke Supabase
                 await saveToDatabase(compressed, finalStatus);
 
+                // 3. Tampilkan Hasil
                 if (finalStatus === 'PAID') {
-                    showResult('success', 'Pembayaran Lunas!', 'Sistem otomatis mendeteksi bukti valid.');
+                    showResult('success', 'Pembayaran Lunas!', 'Sistem otomatis mendeteksi bukti valid. Terima kasih!');
                 } else {
-                    showResult('manual', 'Berhasil Terkirim!', 'Bukti masuk antrian pengecekan Admin. Status: Menunggu.');
+                    showResult('manual', 'Berhasil Terkirim!', 'Bukti masuk antrian. Admin akan mengecek manual.');
                 }
 
             } catch(e) { 
                 console.error(e); 
-                // Jika error, tetap coba upload sebagai PENDING biar user ga kecewa
-                try {
-                    await saveToDatabase(selectedFile, 'PENDING');
-                    showResult('manual', 'Berhasil Terkirim', 'Scan gagal, tapi bukti sudah dikirim ke Admin.');
-                } catch(err2) {
-                    showResult('error', 'Gagal Upload', 'Koneksi bermasalah. Coba lagi.');
-                }
+                // Jika upload gagal, baru tampilkan error
+                showResult('error', 'Gagal Upload', 'Koneksi atau file bermasalah. Coba lagi.');
+            } finally {
+                btn.disabled = false; btn.innerText = "Kirim & Validasi ✓";
             }
         }
 
@@ -327,17 +306,13 @@
 
         async function saveToDatabase(file, status) {
             if(!window.supabaseClient || !window.currentMember) return;
-            
             const fileName = `receipt_${Date.now()}_${window.currentMember.id}.jpg`;
             
-            // 1. Upload Gambar
             const { error: uploadError } = await window.supabaseClient.storage.from('receipts').upload(fileName, file);
             if (uploadError) throw uploadError;
 
-            // 2. Ambil URL
             const { data } = window.supabaseClient.storage.from('receipts').getPublicUrl(fileName);
 
-            // 3. Insert Transaksi (Ini yang bikin masuk ke Admin)
             const { error: dbError } = await window.supabaseClient.from('transactions').insert({
                 user_id: window.currentMember.id, 
                 amount: currentBill, 
