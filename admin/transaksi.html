@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Transaksi | Nusaka Admin</title>
+    <title>Transaksi | Nusaka Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .sidebar-transition { transition: transform 0.3s ease-in-out; }
-    </style>
+    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } .sidebar-transition { transition: transform 0.3s ease-in-out; } </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/config.js"></script>
-    
     <script>
         async function checkAdmin() {
             const sb = window.supabaseClient;
@@ -22,11 +18,11 @@
         checkAdmin();
     </script>
 </head>
-<body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen">
+<body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen relative overflow-x-hidden">
 
-    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm"></div>
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-2xl lg:shadow-none">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col">
         <div class="flex items-center justify-between mb-10 px-2">
             <div class="text-2xl font-extrabold text-blue-600 tracking-tighter flex items-center gap-2">
                 <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
@@ -38,35 +34,30 @@
         </div>
 
         <nav class="space-y-1.5 flex-1">
-            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 Dashboard
             </a>
-            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 Anggota
             </a>
-            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition">
+            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
                 Transaksi
-            </a>
-            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                Withdraw
             </a>
         </nav>
     </aside>
 
     <main class="flex-1 lg:ml-72 flex flex-col min-h-screen w-full">
-        
-        <header class="sticky top-0 bg-[#F8FAFC]/90 backdrop-blur-xl z-20 px-6 py-4 flex items-center justify-between border-b border-slate-100 lg:border-none">
+        <header class="sticky top-0 bg-[#F8FAFC]/90 backdrop-blur-xl z-20 px-6 py-5 flex items-center justify-between border-b border-slate-100 lg:border-none">
             <div class="flex items-center gap-4">
                 <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
                 <div>
-                    <h1 class="text-lg lg:text-2xl font-extrabold text-slate-900 tracking-tight">Riwayat Transaksi</h1>
-                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Validasi pembayaran iuran anggota.</p>
+                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Data Transaksi</h1>
+                    <p class="hidden lg:block text-xs text-slate-400 font-medium mt-0.5">Validasi iuran anggota.</p>
                 </div>
             </div>
             <button onclick="loadTransactions()" class="p-2.5 bg-white text-slate-600 hover:text-blue-600 rounded-xl border border-slate-200 shadow-sm transition">
@@ -74,158 +65,79 @@
             </button>
         </header>
 
-        <div class="p-6 lg:p-10 space-y-6">
-            
+        <div class="p-6 lg:p-10">
             <div class="bg-white border border-slate-100 rounded-[2rem] shadow-xl shadow-slate-200/40 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-100 bg-slate-50/50">
                                 <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Tanggal</th>
-                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Anggota</th>
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Nama</th>
                                 <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Nominal</th>
-                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Bukti Foto</th>
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Bukti</th>
                                 <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Status</th>
                                 <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="trxTableBody" class="divide-y divide-slate-50">
-                            <tr><td colspan="6" class="p-8 text-center text-xs text-slate-400 animate-pulse">Memuat data transaksi...</td></tr>
+                            <tr><td colspan="6" class="p-8 text-center text-xs text-slate-400 animate-pulse">Memuat data...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </main>
 
     <div id="proofModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeProofModal()">
         <div class="bg-white p-2 rounded-2xl max-w-sm w-full shadow-2xl relative animate-[pop_0.3s_ease-out]" onclick="event.stopPropagation()">
-            <button onclick="closeProofModal()" class="absolute -top-10 right-0 text-white hover:text-slate-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
+            <button onclick="closeProofModal()" class="absolute -top-10 right-0 text-white"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             <img id="proofImg" src="" class="w-full h-auto rounded-xl bg-slate-100 object-contain max-h-[70vh]">
-            <div class="p-4 text-center">
-                <a id="downloadBtn" href="#" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">Buka Ukuran Penuh</a>
-            </div>
+            <div class="p-4 text-center"><a id="downloadBtn" href="#" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">Buka Full Size</a></div>
         </div>
     </div>
 
     <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
         const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
-        const formatDate = (dateString) => {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-        };
+        const formatDate = (dateString) => new Date(dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-        // --- LOAD TRANSAKSI ---
         async function loadTransactions() {
             const tbody = document.getElementById('trxTableBody');
             if (!window.supabaseClient) return;
-
             try {
-                // Ambil data transaksi + Nama User dari tabel profiles
-                const { data, error } = await window.supabaseClient
-                    .from('transactions')
-                    .select('*, profiles(full_name)')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-xs text-slate-400">Belum ada transaksi.</td></tr>`;
-                    return;
-                }
-
+                const { data } = await window.supabaseClient.from('transactions').select('*, profiles(full_name)').order('created_at', { ascending: false });
+                if (!data || data.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-xs text-slate-400">Kosong.</td></tr>`; return; }
+                
                 tbody.innerHTML = data.map(trx => {
-                    // Status Badge Color
-                    let statusBadge = '';
-                    if (trx.status === 'PAID') {
-                        statusBadge = `<span class="px-2.5 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-bold border border-green-100 flex items-center justify-center gap-1 w-max mx-auto"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Lunas</span>`;
-                    } else if (trx.status === 'PENDING') {
-                        statusBadge = `<span class="px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-600 text-[10px] font-bold border border-yellow-100 flex items-center justify-center gap-1 w-max mx-auto"><span class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></span> Cek Manual</span>`;
-                    } else {
-                        statusBadge = `<span class="px-2.5 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-bold border border-red-100 w-max mx-auto">Ditolak</span>`;
-                    }
+                    let badge = trx.status === 'PAID' ? `<span class="bg-green-50 text-green-600 px-2 py-1 rounded-full text-[10px] font-bold border border-green-100">Lunas</span>` : 
+                                trx.status === 'PENDING' ? `<span class="bg-yellow-50 text-yellow-600 px-2 py-1 rounded-full text-[10px] font-bold border border-yellow-100 animate-pulse">Cek Manual</span>` : 
+                                `<span class="bg-red-50 text-red-600 px-2 py-1 rounded-full text-[10px] font-bold border border-red-100">Ditolak</span>`;
+                    
+                    let proofBtn = trx.proof_url ? `<button onclick="showProof('${trx.proof_url}')" class="text-blue-600 text-[10px] font-bold underline">Lihat Foto</button>` : `<span class="text-slate-300 text-[10px]">No Foto</span>`;
+                    
+                    let actions = trx.status === 'PENDING' ? 
+                        `<div class="flex justify-end gap-2"><button onclick="updStatus('${trx.id}','PAID')" class="bg-green-100 text-green-700 p-1.5 rounded-lg hover:bg-green-200">✓</button><button onclick="updStatus('${trx.id}','REJECTED')" class="bg-red-100 text-red-700 p-1.5 rounded-lg hover:bg-red-200">✕</button></div>` : 
+                        `<span class="text-slate-300 text-[10px]">-</span>`;
 
-                    // Button Lihat Foto
-                    let btnFoto = `<span class="text-slate-300 text-[10px] italic">Tanpa Bukti</span>`;
-                    if (trx.proof_url) {
-                        btnFoto = `<button onclick="showProof('${trx.proof_url}')" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-lg hover:bg-blue-100 transition border border-blue-100">
-                            Lihat Bukti
-                        </button>`;
-                    }
-
-                    // Action Buttons (Hanya muncul jika PENDING)
-                    let actions = `<span class="text-slate-300 text-xs">-</span>`;
-                    if (trx.status === 'PENDING') {
-                        actions = `
-                            <div class="flex justify-end gap-2">
-                                <button onclick="verifyTrx('${trx.id}', 'PAID')" class="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 border border-green-200" title="Terima (Lunas)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                </button>
-                                <button onclick="verifyTrx('${trx.id}', 'REJECTED')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 border border-red-200" title="Tolak">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                </button>
-                            </div>
-                        `;
-                    } else if (trx.status === 'PAID') {
-                         actions = `<button onclick="verifyTrx('${trx.id}', 'PENDING')" class="text-[10px] text-slate-400 underline hover:text-red-500">Batal Acc</button>`;
-                    }
-
-                    return `
-                        <tr class="hover:bg-slate-50 transition group">
-                            <td class="p-5 text-xs text-slate-500 font-medium whitespace-nowrap">${formatDate(trx.created_at)}</td>
-                            <td class="p-5">
-                                <p class="text-xs font-bold text-slate-800">${trx.profiles?.full_name || 'Tanpa Nama'}</p>
-                            </td>
-                            <td class="p-5 text-xs font-bold text-slate-700 font-mono">${formatRupiah(trx.amount)}</td>
-                            <td class="p-5 text-center">${btnFoto}</td>
-                            <td class="p-5 text-center">${statusBadge}</td>
-                            <td class="p-5 text-right">${actions}</td>
-                        </tr>
-                    `;
+                    return `<tr class="hover:bg-slate-50 border-b border-slate-50 last:border-none">
+                        <td class="p-5 text-xs text-slate-500">${formatDate(trx.created_at)}</td>
+                        <td class="p-5 text-xs font-bold text-slate-800">${trx.profiles?.full_name}</td>
+                        <td class="p-5 text-xs font-mono font-bold">${formatRupiah(trx.amount)}</td>
+                        <td class="p-5 text-center">${proofBtn}</td>
+                        <td class="p-5 text-center">${badge}</td>
+                        <td class="p-5 text-right">${actions}</td>
+                    </tr>`;
                 }).join('');
-
-            } catch (err) {
-                console.error(err);
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-xs text-red-500">Gagal memuat data: ${err.message}</td></tr>`;
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // --- ACTIONS ---
-        function showProof(url) {
-            document.getElementById('proofImg').src = url;
-            document.getElementById('downloadBtn').href = url;
-            document.getElementById('proofModal').classList.remove('hidden');
+        function showProof(url) { document.getElementById('proofImg').src = url; document.getElementById('downloadBtn').href = url; document.getElementById('proofModal').classList.remove('hidden'); }
+        function closeProofModal() { document.getElementById('proofModal').classList.add('hidden'); }
+        async function updStatus(id, status) {
+            if(!confirm("Update status?")) return;
+            await window.supabaseClient.from('transactions').update({ status }).eq('id', id);
+            loadTransactions();
         }
-        function closeProofModal() {
-            document.getElementById('proofModal').classList.add('hidden');
-        }
-
-        async function verifyTrx(id, newStatus) {
-            if(!confirm(`Ubah status transaksi ini menjadi ${newStatus}?`)) return;
-
-            try {
-                const { error } = await window.supabaseClient
-                    .from('transactions')
-                    .update({ status: newStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                loadTransactions(); // Refresh table
-            } catch (err) {
-                alert("Error update: " + err.message);
-            }
-        }
-
         loadTransactions();
     </script>
 </body>
