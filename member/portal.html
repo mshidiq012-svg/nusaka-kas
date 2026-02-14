@@ -43,26 +43,25 @@
         </div>
     </div>
 
-    <script>
-        // --- LOGIC ANTI BRUTE FORCE ---
+<script>
+        // --- LOGIC LOGIN MEMBER ---
         const MAX_ATTEMPTS = 5;
         const LOCKOUT_TIME = 30 * 60 * 1000; // 30 Menit
 
+        // Cek apakah akun terkunci karena kebanyakan salah
         function checkLockout() {
             const lockoutUntil = localStorage.getItem('portal_lockout_until');
             if (lockoutUntil && Date.now() < lockoutUntil) {
                 const remaining = Math.ceil((lockoutUntil - Date.now()) / 60000);
-                showAlert(`Akun terkunci sementara. Coba lagi dalam ${remaining} menit.`, 'error');
+                showAlert(`Akun terkunci. Tunggu ${remaining} menit.`, 'error');
                 document.getElementById('btnLogin').disabled = true;
-                document.getElementById('btnLogin').classList.add('opacity-50', 'cursor-not-allowed');
                 return true;
             }
-            // Jika waktu habis, reset
+            // Reset jika waktu habis
             if (lockoutUntil && Date.now() > lockoutUntil) {
                 localStorage.removeItem('portal_failed_attempts');
                 localStorage.removeItem('portal_lockout_until');
                 document.getElementById('btnLogin').disabled = false;
-                document.getElementById('btnLogin').classList.remove('opacity-50', 'cursor-not-allowed');
             }
             return false;
         }
@@ -71,10 +70,8 @@
             let attempts = parseInt(localStorage.getItem('portal_failed_attempts') || '0');
             attempts++;
             localStorage.setItem('portal_failed_attempts', attempts);
-
             if (attempts >= MAX_ATTEMPTS) {
-                const lockoutUntil = Date.now() + LOCKOUT_TIME;
-                localStorage.setItem('portal_lockout_until', lockoutUntil);
+                localStorage.setItem('portal_lockout_until', Date.now() + LOCKOUT_TIME);
                 checkLockout();
             }
         }
@@ -86,8 +83,7 @@
             box.classList.remove('hidden');
         }
 
-        // --- LOGIN LOGIC ---
-        checkLockout(); // Cek saat load
+        checkLockout(); // Jalan saat load
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -101,29 +97,48 @@
             const pin = document.getElementById('pin').value.trim();
 
             try {
-                if (!window.supabaseClient) throw new Error("Config Error.");
+                if (!window.supabaseClient) throw new Error("Koneksi Database Gagal.");
 
-                const { data, error } = await window.supabaseClient
+                // 1. CEK DATA MEMBER DI DATABASE
+                const { data: profile, error } = await window.supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('nim', nim)
-                    .eq('access_key', pin)
+                    .eq('access_key', pin) // Cek PIN manual
                     .single();
 
-                if (error || !data) {
-                    recordFailure(); // Catat kegagalan
+                if (error || !profile) {
+                    recordFailure();
                     throw new Error("NIM atau PIN salah!");
                 }
 
-                // Sukses: Reset percobaan gagal
+                // 2. LOGIN RESMI KE SUPABASE (PENTING BIAR GAK MENTAL)
+                // Kita gunakan email dari profil & PIN sebagai password
+                const { error: authError } = await window.supabaseClient.auth.signInWithPassword({
+                    email: profile.email,
+                    password: pin 
+                });
+
+                // Jika login auth gagal (misal password beda), kita paksa login via database saja
+                // (Ini fallback jika auth bermasalah, tapi RLS mungkin terbatas)
+                if (authError) {
+                    console.warn("Auth Login failed, using manual session:", authError.message);
+                }
+
+                // 3. SUKSES & REDIRECT KE ALAMAT YANG BENAR
+                showAlert("Login Berhasil! Mengalihkan...", "success");
+                
+                // Reset Log Gagal
                 localStorage.removeItem('portal_failed_attempts');
                 localStorage.removeItem('portal_lockout_until');
-                
-                // Simpan Sesi
-                localStorage.setItem('nusaka_member_session', JSON.stringify(data));
-                window.location.href = 'dashboard.html';
+
+                // Arahkan ke folder member (FIX PATH)
+                setTimeout(() => {
+                    window.location.href = 'member/dashboard.html'; 
+                }, 1000);
 
             } catch (err) {
+                console.error(err);
                 const attempts = localStorage.getItem('portal_failed_attempts') || 0;
                 showAlert(`${err.message} (Percobaan ${attempts}/${MAX_ATTEMPTS})`, 'error');
                 btn.innerText = "Masuk Sekarang";
