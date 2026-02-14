@@ -44,11 +44,9 @@
     </div>
 
 <script>
-        // --- LOGIC LOGIN MEMBER ---
         const MAX_ATTEMPTS = 5;
-        const LOCKOUT_TIME = 30 * 60 * 1000; // 30 Menit
+        const LOCKOUT_TIME = 30 * 60 * 1000;
 
-        // Cek apakah akun terkunci karena kebanyakan salah
         function checkLockout() {
             const lockoutUntil = localStorage.getItem('portal_lockout_until');
             if (lockoutUntil && Date.now() < lockoutUntil) {
@@ -57,7 +55,6 @@
                 document.getElementById('btnLogin').disabled = true;
                 return true;
             }
-            // Reset jika waktu habis
             if (lockoutUntil && Date.now() > lockoutUntil) {
                 localStorage.removeItem('portal_failed_attempts');
                 localStorage.removeItem('portal_lockout_until');
@@ -83,7 +80,7 @@
             box.classList.remove('hidden');
         }
 
-        checkLockout(); // Jalan saat load
+        checkLockout();
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -97,14 +94,14 @@
             const pin = document.getElementById('pin').value.trim();
 
             try {
-                if (!window.supabaseClient) throw new Error("Koneksi Database Gagal.");
+                if (!window.supabaseClient) throw new Error("Database belum siap.");
 
-                // 1. CEK DATA MEMBER DI DATABASE
+                // 1. Cek Data Profil
                 const { data: profile, error } = await window.supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('nim', nim)
-                    .eq('access_key', pin) // Cek PIN manual
+                    .eq('access_key', pin)
                     .single();
 
                 if (error || !profile) {
@@ -112,35 +109,26 @@
                     throw new Error("NIM atau PIN salah!");
                 }
 
-                // 2. LOGIN RESMI KE SUPABASE (PENTING BIAR GAK MENTAL)
-                // Kita gunakan email dari profil & PIN sebagai password
+                // 2. Login Auth (Wajib untuk RLS)
                 const { error: authError } = await window.supabaseClient.auth.signInWithPassword({
                     email: profile.email,
-                    password: pin 
+                    password: pin
                 });
 
-                // Jika login auth gagal (misal password beda), kita paksa login via database saja
-                // (Ini fallback jika auth bermasalah, tapi RLS mungkin terbatas)
-                if (authError) {
-                    console.warn("Auth Login failed, using manual session:", authError.message);
-                }
+                if (authError) console.warn("Auth warning:", authError.message);
 
-                // 3. SUKSES & REDIRECT KE ALAMAT YANG BENAR
+                // 3. SUKSES & REDIRECT ABSOLUTE PATH
                 showAlert("Login Berhasil! Mengalihkan...", "success");
-                
-                // Reset Log Gagal
                 localStorage.removeItem('portal_failed_attempts');
-                localStorage.removeItem('portal_lockout_until');
-
-                // Arahkan ke folder member (FIX PATH)
+                
                 setTimeout(() => {
-                    window.location.href = 'member/dashboard.html'; 
+                    // PERBAIKAN DISINI: Gunakan Absolute Path (Slash di depan)
+                    window.location.href = '/member/dashboard.html'; 
                 }, 1000);
 
             } catch (err) {
-                console.error(err);
                 const attempts = localStorage.getItem('portal_failed_attempts') || 0;
-                showAlert(`${err.message} (Percobaan ${attempts}/${MAX_ATTEMPTS})`, 'error');
+                showAlert(`${err.message} (${attempts}/${MAX_ATTEMPTS})`, 'error');
                 btn.innerText = "Masuk Sekarang";
                 if (!checkLockout()) btn.disabled = false;
             }
