@@ -4,247 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin | Nusaka Kas</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .sidebar-transition { transition: transform 0.3s ease-in-out; }
     </style>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/config.js"></script>
     
-    <script src="../config.js"></script>
-    <script src="../auth_guard.js"></script>
+    <script>
+        async function checkAdmin() {
+            const sb = window.supabaseClient;
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) window.location.href = 'login.html';
+            
+            const { data: profile } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+            if (!profile || (profile.role !== 'admin' && profile.role !== 'superadmin')) {
+                window.location.href = 'login.html';
+            }
+        }
+        checkAdmin();
+    </script>
 </head>
-<body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen">
+<body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen relative overflow-x-hidden">
 
-    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden"></div>
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-2xl lg:shadow-none">
         <div class="flex items-center justify-between mb-10 px-2">
-            <div class="text-2xl font-bold text-blue-600 tracking-tighter">NUSAKA<span class="text-slate-800 text-sm italic">kas</span></div>
-            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
+            <div class="text-2xl font-extrabold text-blue-600 tracking-tighter flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                NUSAKA<span class="text-slate-800 text-sm italic font-normal">admin</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600">✕</button>
         </div>
 
-        <nav class="space-y-2 flex-1">
-            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-xl font-bold shadow-sm transition">
+        <nav class="space-y-1.5 flex-1">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 Dashboard
             </a>
-            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
-                Anggota
-            </a>
-            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
-                Transaksi
-            </a>
-            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
-                Withdraw
-            </a>
-            <a href="profile.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl font-semibold transition">
-                Profile Saya
-            </a>
-        </nav>
+            </nav>
 
-        <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl font-bold transition text-sm w-full text-left">
+        <button onclick="logout()" class="flex items-center gap-3 px-4 py-3.5 text-red-500 hover:bg-red-50 rounded-2xl font-bold transition text-sm w-full text-left mt-4 group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             Logout
         </button>
     </aside>
 
-    <main class="flex-1 lg:ml-72 flex flex-col min-h-screen">
+    <main class="flex-1 lg:ml-72 flex flex-col min-h-screen w-full">
         
-        <header class="sticky top-0 bg-[#F8FAFC]/80 backdrop-blur-md z-20 px-6 py-4 lg:px-10 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 lg:border-none gap-4">
-            <div class="flex items-center gap-4 w-full md:w-auto">
-                <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-lg border border-slate-200 shadow-sm text-slate-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        <header class="sticky top-0 bg-[#F8FAFC]/90 backdrop-blur-xl z-20 px-6 py-4 flex items-center justify-between border-b border-slate-100 lg:border-none">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-600 active:scale-95 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
                 <div>
-                    <h1 class="text-xl lg:text-2xl font-bold text-slate-900">Ringkasan Kas</h1>
-                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Monitoring keuangan organisasi secara real-time.</p>
+                    <h1 class="text-lg lg:text-2xl font-extrabold text-slate-900 tracking-tight">Ringkasan Kas</h1>
+                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Monitoring keuangan organisasi.</p>
                 </div>
-            </div>
-            
-            <div class="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-                
-                <button onclick="copyLink('portal')" id="btnPortal" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-sm whitespace-nowrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
-                    <span>Link Portal</span>
-                </button>
-
-                <button onclick="copyLink('public')" id="btnPublic" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition shadow-sm whitespace-nowrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span>Link Publik</span>
-                </button>
-
-                <a href="profile.html" id="adminAvatar" class="w-10 h-10 bg-blue-100 rounded-full flex-shrink-0 flex items-center justify-center text-blue-600 font-bold text-sm cursor-pointer hover:ring-4 hover:ring-blue-50 transition border-2 border-white shadow-sm">
-                    ...
-                </a>
             </div>
         </header>
 
-        <div class="p-6 lg:p-10 space-y-8">
+        <div class="p-6 lg:p-10 space-y-8 pb-24">
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
-                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full opacity-50 group-hover:scale-110 transition"></div>
+                    <div class="absolute right-5 top-5 w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                    </div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Saldo Kas</p>
-                    <h3 id="totalSaldo" class="text-3xl font-black text-slate-900 tracking-tight">Rp ...</h3>
-                </div>
-
-                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
-                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full opacity-50 group-hover:scale-110 transition"></div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Masuk Bulan Ini</p>
-                    <h3 id="incomeMonth" class="text-3xl font-black text-slate-900 tracking-tight">Rp ...</h3>
-                </div>
-
-                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group sm:col-span-2 lg:col-span-1">
-                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-purple-50 rounded-full opacity-50 group-hover:scale-110 transition"></div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Anggota</p>
-                    <h3 id="totalMembers" class="text-3xl font-black text-slate-900 tracking-tight">... Org</h3>
+                    <h3 id="totalSaldo" class="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Rp ...</h3>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] border border-slate-100 p-6 lg:p-8 shadow-sm">
-                <div class="flex items-center justify-between mb-8">
-                    <h3 class="font-bold text-slate-900">Aktivitas Terakhir</h3>
-                    <a href="transaksi.html" class="text-xs font-bold text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition">Lihat Semua →</a>
-                </div>
-                <div id="recentTxList" class="space-y-6">
-                    <p class="text-center text-slate-400 text-sm py-4 italic animate-pulse">Memuat data transaksi...</p>
+            <div class="bg-white border border-indigo-100 rounded-[2rem] p-6 lg:p-8 shadow-xl shadow-indigo-100/50 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                
+                <div class="flex flex-col md:flex-row gap-8 items-start">
+                    <div class="flex-shrink-0 text-center w-full md:w-auto">
+                        <p class="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">QRIS Aktif</p>
+                        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 inline-block">
+                            <img id="currentQRImg" src="https://via.placeholder.com/150?text=Loading..." class="w-40 h-40 object-contain rounded-xl bg-white shadow-sm" alt="QRIS">
+                        </div>
+                    </div>
+
+                    <div class="flex-1 w-full">
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Update QRIS Pembayaran</h3>
+                        <p class="text-sm text-slate-500 mb-6 leading-relaxed">
+                            Ganti gambar QRIS (GoPay/DANA/Saweria) yang tampil di dashboard member. 
+                            <span class="text-blue-500 font-semibold block mt-1">Gambar baru akan langsung muncul di semua HP member.</span>
+                        </p>
+
+                        <div class="relative group max-w-md w-full">
+                            <input type="file" id="qrisInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewUpload(this)">
+                            <div id="uploadBox" class="w-full py-4 bg-indigo-50 border-2 border-dashed border-indigo-200 rounded-xl text-indigo-600 font-bold text-xs flex flex-col md:flex-row items-center justify-center gap-2 group-hover:bg-indigo-100 transition text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <span>Klik untuk Pilih Gambar QRIS Baru</span>
+                            </div>
+                        </div>
+
+                        <div id="actionButtons" class="hidden mt-4 flex flex-col md:flex-row gap-3">
+                            <button onclick="uploadQRIS()" id="btnSaveQR" class="w-full md:w-auto px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition shadow-lg">
+                                Simpan & Update
+                            </button>
+                            <button onclick="cancelUpload()" class="w-full md:w-auto px-4 py-3 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:text-red-500 transition">
+                                Batal
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
     </main>
 
     <script>
-        // ==========================================
-        // UI HELPERS (SIDEBAR & COPY LINK)
-        // ==========================================
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-
+        // LOGIC SIDEBAR
         function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
             sidebar.classList.toggle('-translate-x-full');
             overlay.classList.toggle('hidden');
         }
-        overlay.addEventListener('click', toggleSidebar);
 
-        function copyLink(type) {
-            const baseUrl = window.location.origin;
-            let url = "";
-            let btnId = "";
-            let originalContent = "";
-
-            if (type === 'portal') {
-                url = `${baseUrl}/member/portal.html`;
-                btnId = 'btnPortal';
-            } else {
-                url = `${baseUrl}/public/transparansi.html`;
-                btnId = 'btnPublic';
-            }
-
-            const btn = document.getElementById(btnId);
-            originalContent = btn.innerHTML; // Simpan ikon dan teks asli
-
-            navigator.clipboard.writeText(url).then(() => {
-                // Ubah teks tanpa ikon centang (Hanya teks "Tersalin")
-                btn.innerHTML = `<span class="text-green-600">Tersalin!</span>`;
-                
-                setTimeout(() => { 
-                    btn.innerHTML = originalContent; // Kembalikan ke tampilan awal
-                }, 2000);
-            }).catch(err => {
-                alert("Gagal copy link: " + err);
-            });
+        async function logout() {
+            await window.supabaseClient.auth.signOut();
+            window.location.href = 'login.html';
         }
 
-        // ==========================================
-        // BACKEND LOGIC (LOAD DATA)
-        // ==========================================
-        const formatRupiah = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+        // 1. LOAD SALDO & QRIS
+        async function loadData() {
+            if(!window.supabaseClient) return;
+            const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
 
-        async function loadDashboardData() {
             try {
-                if (!window.supabaseClient) return;
+                // Hitung Saldo
+                const { data: inc } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
+                const { data: out } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
+                const total = (inc?.reduce((a,b)=>a+b.amount,0)||0) - (out?.reduce((a,b)=>a+b.amount,0)||0);
+                document.getElementById('totalSaldo').innerText = formatRupiah(total);
 
-                // 1. Ambil Info Admin (Avatar)
-                const { data: { user } } = await window.supabaseClient.auth.getUser();
-                if(user) {
-                    const { data: profile } = await window.supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
-                    if(profile) {
-                        const initials = profile.full_name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-                        document.getElementById('adminAvatar').innerText = initials;
-                    }
+                // Load QRIS Image
+                const { data } = await window.supabaseClient.from('app_settings').select('value').eq('key', 'qris_url').single();
+                if (data && data.value) {
+                    document.getElementById('currentQRImg').src = data.value + '?t=' + new Date().getTime();
                 }
+            } catch (e) { console.error(e); }
+        }
 
-                // 2. Hitung Saldo (Total Masuk - Total Keluar)
-                const { data: incomeData } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
-                const totalMasuk = incomeData ? incomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
-
-                const { data: outcomeData } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
-                const totalKeluar = outcomeData ? outcomeData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
-
-                // 3. Hitung Pemasukan Bulan Ini
-                const date = new Date();
-                const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
-                const { data: monthlyData } = await window.supabaseClient
-                    .from('transactions')
-                    .select('amount')
-                    .eq('status', 'PAID')
-                    .gte('created_at', firstDay);
-                const incomeThisMonth = monthlyData ? monthlyData.reduce((acc, curr) => acc + curr.amount, 0) : 0;
-
-                // 4. Hitung Total Member
-                const { count: memberCount } = await window.supabaseClient
-                    .from('profiles')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('role', 'member');
-
-                // Update UI Statistik
-                document.getElementById('totalSaldo').innerText = formatRupiah(totalMasuk - totalKeluar);
-                document.getElementById('incomeMonth').innerText = formatRupiah(incomeThisMonth);
-                document.getElementById('totalMembers').innerText = (memberCount || 0) + " Org";
-
-                // 5. Load 5 Transaksi Terakhir
-                const { data: recent } = await window.supabaseClient
-                    .from('transactions')
-                    .select('amount, created_at, payment_method, profiles:user_id(full_name)')
-                    .eq('status', 'PAID')
-                    .order('created_at', { ascending: false })
-                    .limit(5);
-
-                const listContainer = document.getElementById('recentTxList');
-                
-                if (recent && recent.length > 0) {
-                    listContainer.innerHTML = recent.map(tx => `
-                        <div class="flex justify-between items-center group border-b border-slate-50 pb-4 last:border-0">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-2xl ${tx.payment_method === 'TRIPAY' ? 'bg-blue-50 text-blue-600' : 'bg-emerald-50 text-emerald-600'} flex items-center justify-center font-bold text-xs transition-transform group-hover:scale-110">
-                                    ${tx.profiles?.full_name ? tx.profiles.full_name.substring(0,2).toUpperCase() : '??'}
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-800">${tx.profiles?.full_name || 'Tanpa Nama'}</p>
-                                    <p class="text-[10px] text-slate-400 font-medium">
-                                        ${new Date(tx.created_at).toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})} • ${tx.payment_method}
-                                    </p>
-                                </div>
-                            </div>
-                            <span class="text-sm font-extrabold text-emerald-600">+ ${formatRupiah(tx.amount)}</span>
-                        </div>
-                    `).join('');
-                } else {
-                    listContainer.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi.</p>`;
+        // 2. PREVIEW UPLOAD
+        function previewUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('currentQRImg').src = e.target.result;
+                    document.getElementById('actionButtons').classList.remove('hidden');
+                    document.getElementById('uploadBox').innerHTML = `File: ${input.files[0].name}`;
+                    document.getElementById('uploadBox').classList.add('bg-green-50', 'border-green-300', 'text-green-700');
                 }
-
-            } catch (err) {
-                console.error("Dashboard Error:", err);
+                reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // Jalankan saat load
-        loadDashboardData();
+        function cancelUpload() {
+            document.getElementById('actionButtons').classList.add('hidden');
+            document.getElementById('qrisInput').value = '';
+            document.getElementById('uploadBox').innerHTML = `Klik untuk Pilih Gambar QRIS Baru`;
+            document.getElementById('uploadBox').classList.remove('bg-green-50', 'border-green-300', 'text-green-700');
+            loadData(); // Reset Image
+        }
 
+        // 3. PROSES UPLOAD
+        async function uploadQRIS() {
+            const file = document.getElementById('qrisInput').files[0];
+            if (!file) return;
+
+            const btn = document.getElementById('btnSaveQR');
+            btn.innerHTML = 'Mengupload...';
+            btn.disabled = true;
+
+            try {
+                // Upload Storage
+                const fileName = `qris_active_${Date.now()}.jpg`; 
+                const { error: uploadError } = await window.supabaseClient.storage.from('app-assets').upload(fileName, file);
+                if (uploadError) throw uploadError;
+
+                // Get URL
+                const { data: urlData } = window.supabaseClient.storage.from('app-assets').getPublicUrl(fileName);
+
+                // Update Database
+                const { error: dbError } = await window.supabaseClient.from('app_settings')
+                    .upsert({ key: 'qris_url', value: urlData.publicUrl, updated_at: new Date() });
+
+                if (dbError) throw dbError;
+
+                alert("Sukses! QRIS berhasil diperbarui.");
+                cancelUpload(); // Reset UI
+                
+            } catch (err) {
+                alert("Gagal: " + err.message);
+                btn.innerHTML = 'Simpan & Update';
+                btn.disabled = false;
+            }
+        }
+
+        loadData();
     </script>
 </body>
 </html>

@@ -3,352 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input & Riwayat Transaksi | Nusaka Kas</title>
-    
+    <title>Data Transaksi | Nusaka Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .active-tab { background-color: #0f172a; color: white; }
-        .inactive-tab { background-color: white; color: #64748b; border: 1px solid #e2e8f0; }
-        /* Animasi */
-        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .sidebar-transition { transition: transform 0.3s ease-in-out; }
     </style>
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-
-    <script src="../config.js"></script>
-    <script src="../auth_guard.js"></script>
+    <script src="/config.js"></script>
+    
+    <script>
+        async function checkAdmin() {
+            const sb = window.supabaseClient;
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) window.location.href = 'login.html';
+        }
+        checkAdmin();
+    </script>
 </head>
 <body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen">
-    
-    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-lg lg:shadow-none">
-        <div class="flex items-center justify-between mb-8 px-2">
-            <div class="text-2xl font-bold text-blue-600 tracking-tighter">NUSAKA<span class="text-slate-800 text-sm italic">kas</span></div>
-            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400">✕</button>
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm"></div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-2xl lg:shadow-none">
+        <div class="flex items-center justify-between mb-10 px-2">
+            <div class="text-2xl font-extrabold text-blue-600 tracking-tighter flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                NUSAKA<span class="text-slate-800 text-sm italic font-normal">admin</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600">✕</button>
         </div>
-        <nav class="space-y-2 flex-1">
-            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Dashboard</a>
-            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Anggota</a>
-            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg font-bold transition text-sm">Transaksi</a>
-            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Withdraw</a>
-            <a href="profile.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Profile Saya</a>
+
+        <nav class="space-y-1.5 flex-1">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </a>
+            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Anggota
+            </a>
+            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                Transaksi
+            </a>
+            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                Withdraw
+            </a>
         </nav>
-        <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg font-bold transition text-sm w-full text-left mt-4">Logout</button>
     </aside>
 
-    <main class="flex-1 lg:ml-64 p-6 lg:p-10 overflow-y-auto w-full">
+    <main class="flex-1 lg:ml-72 flex flex-col min-h-screen w-full">
         
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900">Kelola Keuangan</h1>
-                <p class="text-sm text-slate-400">Input kas manual & monitoring Tripay.</p>
-            </div>
-            
-            <div class="relative group">
-                <button class="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-700 transition transform active:scale-95 text-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                    Download Laporan
+        <header class="sticky top-0 bg-[#F8FAFC]/90 backdrop-blur-xl z-20 px-6 py-4 flex items-center justify-between border-b border-slate-100 lg:border-none">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
-                <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 hidden group-hover:block z-50 overflow-hidden animate-fade-in">
-                    <div class="p-1">
-                        <button onclick="TransactionService.exportData('xlsx')" class="w-full text-left px-4 py-2 text-xs font-bold text-slate-600 hover:bg-green-50 hover:text-green-600 rounded-lg transition">Format Excel (.xlsx)</button>
-                        <button onclick="TransactionService.exportData('csv')" class="w-full text-left px-4 py-2 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition">Format CSV</button>
-                    </div>
+                <div>
+                    <h1 class="text-lg lg:text-2xl font-extrabold text-slate-900 tracking-tight">Riwayat Transaksi</h1>
+                    <p class="hidden lg:block text-xs text-slate-400 font-medium">Validasi pembayaran iuran anggota.</p>
                 </div>
             </div>
-        </div>
-
-        <div class="flex gap-3 mb-8 border-b border-slate-200 pb-1">
-            <button id="btn-tunai" onclick="UI.switchTab('tunai')" class="px-6 py-2 rounded-t-lg text-sm font-bold transition-all border-b-2 border-blue-600 text-blue-600">
-                Input Tunai
+            <button onclick="loadTransactions()" class="p-2.5 bg-white text-slate-600 hover:text-blue-600 rounded-xl border border-slate-200 shadow-sm transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
             </button>
-            <button id="btn-tripay" onclick="UI.switchTab('tripay')" class="px-6 py-2 rounded-t-lg text-sm font-bold transition-all text-slate-400 hover:text-slate-600 border-b-2 border-transparent">
-                Riwayat Tripay
-            </button>
-        </div>
+        </header>
 
-        <div id="view-tunai" class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in">
-            <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-                <h3 class="font-bold text-slate-900 mb-6 flex items-center gap-2 text-lg">
-                    <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span>
-                    Form Pembayaran Manual
-                </h3>
-                
-                <form id="formManual" class="space-y-5">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Pilih Anggota</label>
-                        <div class="relative">
-                            <select id="t_user_id" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold focus:outline-none focus:border-blue-500 appearance-none cursor-pointer">
-                                <option value="">-- Memuat Data Anggota... --</option>
-                            </select>
-                            <div class="absolute right-4 top-3.5 text-slate-400 pointer-events-none">▼</div>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Nominal (Rp)</label>
-                        <input type="number" id="t_amount" required value="20000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold focus:outline-none focus:border-blue-500 text-lg">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Keterangan (Opsional)</label>
-                        <textarea id="t_desc" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium focus:outline-none focus:border-blue-500" placeholder="Contoh: Bayar kas bulan Januari"></textarea>
-                    </div>
-                    
-                    <button type="submit" id="btnSubmitManual" class="w-full py-3.5 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-blue-300 transition-all transform active:scale-95 text-sm mt-2">
-                        Simpan Transaksi
-                    </button>
-                </form>
-            </div>
-
-            <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-8 rounded-3xl flex flex-col justify-between shadow-xl shadow-blue-200/50 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full opacity-10 blur-2xl -mr-10 -mt-10"></div>
-                
-                <div class="relative z-10">
-                    <h3 class="text-xl font-bold mb-3 flex items-center gap-2">
-                        <span>💡</span> Tips Bendahara
-                    </h3>
-                    <p class="text-blue-100 text-sm leading-relaxed mb-6 font-medium">
-                        Pastikan uang tunai sudah diterima secara fisik sebelum menekan tombol simpan. 
-                        Data yang masuk akan otomatis berstatus <span class="bg-white/20 px-1.5 py-0.5 rounded text-white font-bold">LUNAS (PAID)</span> dan tercatat di laporan.
-                    </p>
-                    <div class="flex gap-2">
-                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-xs font-bold border border-white/10">Manual Input</span>
-                        <span class="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-xs font-bold border border-white/10">Realtime DB</span>
-                    </div>
-                </div>
-
-                <div class="mt-8 bg-black/20 p-5 rounded-2xl backdrop-blur-sm border border-white/10 relative z-10">
-                    <p class="text-xs font-bold uppercase text-blue-200 mb-1 tracking-widest">Total Uang Masuk (Manual)</p>
-                    <p id="totalManualAmount" class="text-3xl font-black tracking-tight">Rp 0</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="view-tripay" class="hidden animate-fade-in">
-            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-lg">Mutasi Tripay (Otomatis)</h3>
-                        <p class="text-xs text-slate-400 mt-0.5">Data pembayaran via QRIS/VA.</p>
-                    </div>
-                    <span class="px-3 py-1.5 bg-green-100 text-green-700 rounded-lg text-[10px] font-extrabold uppercase tracking-wide flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></span> Live
-                    </span>
-                </div>
-                
+        <div class="p-6 lg:p-10 space-y-6">
+            
+            <div class="bg-white border border-slate-100 rounded-[2rem] shadow-xl shadow-slate-200/40 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table id="table-tripay" class="w-full text-left">
-                        <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
-                            <tr>
-                                <th class="px-6 py-4">Ref ID</th>
-                                <th class="px-6 py-4">Tanggal</th>
-                                <th class="px-6 py-4">Pengirim</th>
-                                <th class="px-6 py-4">Metode</th>
-                                <th class="px-6 py-4">Nominal</th>
-                                <th class="px-6 py-4 text-center">Status</th>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-100 bg-slate-50/50">
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Tanggal</th>
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Anggota</th>
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider">Nominal</th>
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Bukti Foto</th>
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Status</th>
+                                <th class="p-5 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="tbody-tripay" class="divide-y divide-slate-50 text-sm">
-                            <tr><td colspan="6" class="p-8 text-center text-slate-400 text-xs italic">Memuat data transaksi...</td></tr>
+                        <tbody id="trxTableBody" class="divide-y divide-slate-50">
+                            <tr><td colspan="6" class="p-8 text-center text-xs text-slate-400 animate-pulse">Memuat data transaksi...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
 
+        </div>
     </main>
 
-    <div id="modalResult" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-xs rounded-2xl p-6 shadow-2xl text-center animate-fade-in">
-            <div id="resultIcon" class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-2xl"></div>
-            <h3 id="resultTitle" class="text-lg font-bold text-slate-900 mb-1">Title</h3>
-            <p id="resultMessage" class="text-xs text-slate-500 mb-5 leading-relaxed">Message...</p>
-            <button onclick="document.getElementById('modalResult').classList.add('hidden')" class="w-full py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold transition text-sm">Tutup</button>
+    <div id="proofModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeProofModal()">
+        <div class="bg-white p-2 rounded-2xl max-w-sm w-full shadow-2xl relative animate-[pop_0.3s_ease-out]" onclick="event.stopPropagation()">
+            <button onclick="closeProofModal()" class="absolute -top-10 right-0 text-white hover:text-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <img id="proofImg" src="" class="w-full h-auto rounded-xl bg-slate-100 object-contain max-h-[70vh]">
+            <div class="p-4 text-center">
+                <a id="downloadBtn" href="#" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">Buka Ukuran Penuh</a>
+            </div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // 1. UI LOGIC (TABS & SIDEBAR)
-        // ==========================================
-        const UI = {
-            toggleSidebar: () => {
-                document.getElementById('sidebar').classList.toggle('-translate-x-full');
-                document.getElementById('sidebarOverlay').classList.toggle('hidden');
-            },
-            
-            switchTab: (tabName) => {
-                const btnTunai = document.getElementById('btn-tunai');
-                const btnTripay = document.getElementById('btn-tripay');
-                const viewTunai = document.getElementById('view-tunai');
-                const viewTripay = document.getElementById('view-tripay');
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
 
-                if (tabName === 'tunai') {
-                    viewTunai.classList.remove('hidden');
-                    viewTripay.classList.add('hidden');
-                    btnTunai.className = "px-6 py-2 rounded-t-lg text-sm font-bold transition-all border-b-2 border-blue-600 text-blue-600";
-                    btnTripay.className = "px-6 py-2 rounded-t-lg text-sm font-bold transition-all text-slate-400 hover:text-slate-600 border-b-2 border-transparent";
-                } else {
-                    viewTunai.classList.add('hidden');
-                    viewTripay.classList.remove('hidden');
-                    // Load data Tripay saat tab dibuka
-                    TransactionService.fetchTripayTransactions();
-                    
-                    btnTripay.className = "px-6 py-2 rounded-t-lg text-sm font-bold transition-all border-b-2 border-blue-600 text-blue-600";
-                    btnTunai.className = "px-6 py-2 rounded-t-lg text-sm font-bold transition-all text-slate-400 hover:text-slate-600 border-b-2 border-transparent";
-                }
-            },
-
-            showResult: (title, message, isSuccess) => {
-                const modal = document.getElementById('modalResult');
-                const iconBox = document.getElementById('resultIcon');
-                
-                modal.classList.remove('hidden');
-                document.getElementById('resultTitle').textContent = title;
-                document.getElementById('resultMessage').textContent = message;
-                
-                if (isSuccess) {
-                    iconBox.className = "w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-2xl bg-green-100 text-green-600";
-                    iconBox.innerHTML = "✓";
-                } else {
-                    iconBox.className = "w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-2xl bg-red-100 text-red-600";
-                    iconBox.innerHTML = "✕";
-                }
-            },
-
-            formatRupiah: (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka)
+        const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+        const formatDate = (dateString) => {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         };
 
-        // ==========================================
-        // 2. TRANSACTION SERVICE (BACKEND)
-        // ==========================================
-        const TransactionService = {
-            
-            // A. Load List Anggota untuk Dropdown
-            loadMembers: async () => {
-                const select = document.getElementById('t_user_id');
-                if (!window.supabaseClient) return;
+        // --- LOAD TRANSAKSI ---
+        async function loadTransactions() {
+            const tbody = document.getElementById('trxTableBody');
+            if (!window.supabaseClient) return;
 
-                const { data, error } = await window.supabaseClient
-                    .from('profiles')
-                    .select('id, full_name, nim')
-                    .eq('role', 'member')
-                    .order('full_name', { ascending: true });
-
-                if (error) { console.error(error); return; }
-
-                select.innerHTML = '<option value="">-- Pilih Anggota --</option>' + 
-                    data.map(m => `<option value="${m.id}">${m.full_name} (${m.nim})</option>`).join('');
-            },
-
-            // B. Simpan Transaksi Manual
-            saveManualTransaction: async (e) => {
-                e.preventDefault();
-                const btn = document.getElementById('btnSubmitManual');
-                const originalText = btn.textContent;
-                btn.textContent = "Menyimpan...";
-                btn.disabled = true;
-
-                const userId = document.getElementById('t_user_id').value;
-                const amount = document.getElementById('t_amount').value;
-                const desc = document.getElementById('t_desc').value;
-
-                if(!userId) {
-                    UI.showResult("Gagal", "Pilih anggota terlebih dahulu!", false);
-                    btn.textContent = originalText; btn.disabled = false;
-                    return;
-                }
-
-                try {
-                    const { error } = await window.supabaseClient
-                        .from('transactions')
-                        .insert({
-                            user_id: userId,
-                            amount: amount,
-                            payment_method: 'MANUAL', // Tandai sebagai manual
-                            status: 'PAID', // Langsung lunas karena tunai
-                            tripay_reference: desc || 'Pembayaran Tunai' // Simpan ket di sini
-                        });
-
-                    if (error) throw error;
-
-                    UI.showResult("Berhasil", "Transaksi tunai berhasil disimpan.", true);
-                    document.getElementById('formManual').reset();
-                    TransactionService.calculateTotalManual(); // Update total
-
-                } catch (err) {
-                    UI.showResult("Gagal", err.message, false);
-                } finally {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                }
-            },
-
-            // C. Hitung Total Uang Manual
-            calculateTotalManual: async () => {
-                const { data, error } = await window.supabaseClient
-                    .from('transactions')
-                    .select('amount')
-                    .eq('payment_method', 'MANUAL')
-                    .eq('status', 'PAID');
-
-                if (!data) return;
-                const total = data.reduce((sum, row) => sum + row.amount, 0);
-                document.getElementById('totalManualAmount').textContent = UI.formatRupiah(total);
-            },
-
-            // D. Fetch Riwayat Tripay (Untuk Tab Kedua)
-            fetchTripayTransactions: async () => {
-                const tbody = document.getElementById('tbody-tripay');
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 text-xs animate-pulse">Memuat data...</td></tr>`;
-
+            try {
+                // Ambil data transaksi + Nama User dari tabel profiles
                 const { data, error } = await window.supabaseClient
                     .from('transactions')
                     .select('*, profiles(full_name)')
-                    .neq('payment_method', 'MANUAL') // Ambil yang BUKAN manual
                     .order('created_at', { ascending: false });
 
-                if (error || !data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 text-xs">Belum ada transaksi Tripay.</td></tr>`;
+                if (error) throw error;
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-xs text-slate-400">Belum ada transaksi.</td></tr>`;
                     return;
                 }
 
-                tbody.innerHTML = data.map(t => {
-                    const statusColor = t.status === 'PAID' ? 'text-green-600 bg-green-100' : (t.status === 'UNPAID' ? 'text-orange-600 bg-orange-100' : 'text-red-600 bg-red-100');
+                tbody.innerHTML = data.map(trx => {
+                    // Status Badge Color
+                    let statusBadge = '';
+                    if (trx.status === 'PAID') {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-bold border border-green-100 flex items-center justify-center gap-1 w-max mx-auto"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Lunas</span>`;
+                    } else if (trx.status === 'PENDING') {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-600 text-[10px] font-bold border border-yellow-100 flex items-center justify-center gap-1 w-max mx-auto"><span class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></span> Cek Manual</span>`;
+                    } else {
+                        statusBadge = `<span class="px-2.5 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-bold border border-red-100 w-max mx-auto">Ditolak</span>`;
+                    }
+
+                    // Button Lihat Foto
+                    let btnFoto = `<span class="text-slate-300 text-[10px] italic">Tanpa Bukti</span>`;
+                    if (trx.proof_url) {
+                        btnFoto = `<button onclick="showProof('${trx.proof_url}')" class="px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-lg hover:bg-blue-100 transition border border-blue-100">
+                            Lihat Bukti
+                        </button>`;
+                    }
+
+                    // Action Buttons (Hanya muncul jika PENDING)
+                    let actions = `<span class="text-slate-300 text-xs">-</span>`;
+                    if (trx.status === 'PENDING') {
+                        actions = `
+                            <div class="flex justify-end gap-2">
+                                <button onclick="verifyTrx('${trx.id}', 'PAID')" class="p-1.5 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 border border-green-200" title="Terima (Lunas)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </button>
+                                <button onclick="verifyTrx('${trx.id}', 'REJECTED')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 border border-red-200" title="Tolak">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                </button>
+                            </div>
+                        `;
+                    } else if (trx.status === 'PAID') {
+                         actions = `<button onclick="verifyTrx('${trx.id}', 'PENDING')" class="text-[10px] text-slate-400 underline hover:text-red-500">Batal Acc</button>`;
+                    }
+
                     return `
-                    <tr class="hover:bg-slate-50 transition border-b border-slate-50 last:border-none">
-                        <td class="px-6 py-4 font-mono text-xs text-slate-500">${t.tripay_reference || '-'}</td>
-                        <td class="px-6 py-4 font-bold text-slate-700 text-xs">${new Date(t.created_at).toLocaleString('id-ID')}</td>
-                        <td class="px-6 py-4 font-bold text-slate-900 text-sm">${t.profiles?.full_name || 'Tanpa Nama'}</td>
-                        <td class="px-6 py-4"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${t.payment_method}</span></td>
-                        <td class="px-6 py-4 font-bold text-slate-900">${UI.formatRupiah(t.amount)}</td>
-                        <td class="px-6 py-4 text-center"><span class="${statusColor} px-2 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wide">${t.status}</span></td>
-                    </tr>
-                `}).join('');
-            },
+                        <tr class="hover:bg-slate-50 transition group">
+                            <td class="p-5 text-xs text-slate-500 font-medium whitespace-nowrap">${formatDate(trx.created_at)}</td>
+                            <td class="p-5">
+                                <p class="text-xs font-bold text-slate-800">${trx.profiles?.full_name || 'Tanpa Nama'}</p>
+                            </td>
+                            <td class="p-5 text-xs font-bold text-slate-700 font-mono">${formatRupiah(trx.amount)}</td>
+                            <td class="p-5 text-center">${btnFoto}</td>
+                            <td class="p-5 text-center">${statusBadge}</td>
+                            <td class="p-5 text-right">${actions}</td>
+                        </tr>
+                    `;
+                }).join('');
 
-            // E. Export Excel
-            exportData: (type) => {
-                const table = document.getElementById('table-tripay');
-                const wb = XLSX.utils.table_to_book(table, {sheet: "Laporan"});
-                const fileName = `Laporan_Nusaka_${new Date().toISOString().split('T')[0]}.${type}`;
-                XLSX.writeFile(wb, fileName);
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-xs text-red-500">Gagal memuat data: ${err.message}</td></tr>`;
             }
-        };
+        }
 
-        // EVENT LISTENERS
-        document.getElementById('sidebarOverlay').addEventListener('click', UI.toggleSidebar);
-        window.toggleSidebar = UI.toggleSidebar;
-        document.getElementById('formManual').addEventListener('submit', TransactionService.saveManualTransaction);
+        // --- ACTIONS ---
+        function showProof(url) {
+            document.getElementById('proofImg').src = url;
+            document.getElementById('downloadBtn').href = url;
+            document.getElementById('proofModal').classList.remove('hidden');
+        }
+        function closeProofModal() {
+            document.getElementById('proofModal').classList.add('hidden');
+        }
 
-        // INITIAL LOAD
-        TransactionService.loadMembers();
-        TransactionService.calculateTotalManual();
+        async function verifyTrx(id, newStatus) {
+            if(!confirm(`Ubah status transaksi ini menjadi ${newStatus}?`)) return;
 
+            try {
+                const { error } = await window.supabaseClient
+                    .from('transactions')
+                    .update({ status: newStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                loadTransactions(); // Refresh table
+            } catch (err) {
+                alert("Error update: " + err.message);
+            }
+        }
+
+        loadTransactions();
     </script>
 </body>
 </html>
