@@ -6,7 +6,13 @@
     <title>Dashboard Saya | Nusaka Kas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } .animate-pop { animation: popUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); } @keyframes popUp { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } } .scan-line { position: absolute; width: 100%; height: 3px; background: #22c55e; top: 0; animation: scanning 1.5s infinite linear; box-shadow: 0 0 10px #22c55e; } @keyframes scanning { 0% {top: 0;} 50% {top: 100%;} 100% {top: 0;} } </style>
+    <style> 
+        body { font-family: 'Plus Jakarta Sans', sans-serif; } 
+        .animate-pop { animation: popUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); } 
+        @keyframes popUp { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } } 
+        .scan-line { position: absolute; width: 100%; height: 3px; background: #22c55e; top: 0; animation: scanning 1.5s infinite linear; box-shadow: 0 0 10px #22c55e; } 
+        @keyframes scanning { 0% {top: 0;} 50% {top: 100%;} 100% {top: 0;} } 
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
     <script src="member_guard.js"></script> 
@@ -60,28 +66,47 @@
     </main>
 
     <div id="paymentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all">
-        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl relative animate-pop overflow-hidden ring-1 ring-slate-100">
-            <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center bg-slate-50 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition border border-slate-100"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl relative animate-pop overflow-hidden ring-1 ring-slate-100 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center bg-slate-50 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition border border-slate-100 z-50"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             
             <div id="scanStep" class="text-center pt-2">
                 <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6l9-6"></path><path d="M21 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7"></path><path d="M12 13v9"></path></svg></div>
                 <h3 class="text-xl font-black text-slate-900 mb-1">Scan QRIS</h3>
-                <p class="text-xs text-slate-400 mb-6 font-medium">QRIS ini diupdate oleh Admin.</p>
+                <p class="text-xs text-slate-400 mb-6 font-medium">Transfer sesuai nominal, lalu upload bukti.</p>
+                
                 <div class="flex justify-center mb-6">
                     <div class="bg-white p-3 rounded-[1.5rem] border-2 border-dashed border-slate-200 relative group hover:border-blue-300 transition">
-                        <img id="dynamicQRImg" src="https://placehold.co/200x200?text=Loading+QR" class="w-52 h-52 object-contain rounded-xl">
+                        <img id="dynamicQRImg" src="https://placehold.co/200x200?text=Loading..." class="w-52 h-52 object-contain rounded-xl">
                         <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm"><span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">Verified</span></div>
                     </div>
                 </div>
-                <div class="relative group w-full">
-                    <input type="file" id="proofInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="processImage(this)">
-                    <button class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition shadow-xl shadow-slate-200 transform active:scale-[0.98] flex items-center justify-center gap-2">Upload Bukti Bayar</button>
+
+                <div class="relative w-full">
+                    <input type="file" id="proofInput" accept="image/*" class="hidden" onchange="previewImage(this)">
+                    <button onclick="document.getElementById('proofInput').click()" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition shadow-xl shadow-slate-200 transform active:scale-[0.98] flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        Pilih Bukti Bayar
+                    </button>
                 </div>
             </div>
 
-            <div id="processStep" class="hidden text-center mt-4">
-                <h3 class="text-lg font-bold text-slate-900 mb-2">Memvalidasi...</h3>
-                <div class="relative rounded-2xl overflow-hidden border border-slate-200 h-56 w-full bg-slate-100 mb-4"><img id="previewImg" class="w-full h-full object-cover opacity-60"><div class="scan-line"></div></div>
+            <div id="previewStep" class="hidden text-center pt-2">
+                <h3 class="text-lg font-bold text-slate-900 mb-4">Cek Bukti Bayar</h3>
+                <div class="relative rounded-2xl overflow-hidden border border-slate-200 h-64 w-full bg-slate-50 mb-6">
+                    <img id="imgPreviewResult" class="w-full h-full object-contain">
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="resetUI()" class="flex-1 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-xs hover:bg-slate-50 transition">Ganti Foto</button>
+                    <button onclick="processUpload()" class="flex-[2] py-3 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Kirim Bukti ✓</button>
+                </div>
+            </div>
+
+            <div id="processStep" class="hidden text-center mt-10 mb-10">
+                <div class="relative w-20 h-20 mx-auto mb-4">
+                    <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-1">Mengirim...</h3>
                 <p class="text-xs text-slate-400 animate-pulse">Sistem sedang membaca nominal...</p>
             </div>
 
@@ -89,16 +114,17 @@
                 <div id="iconResult" class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 text-4xl shadow-xl transition-all"></div>
                 <h3 id="titleResult" class="text-xl font-black text-slate-900 mb-2"></h3>
                 <p id="descResult" class="text-xs text-slate-500 mb-6 px-4 leading-relaxed"></p>
-                <button onclick="closeModal()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition">Selesai</button>
+                <button onclick="closeModal()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition">Tutup & Refresh</button>
             </div>
         </div>
     </div>
 
     <script>
         const BASE_FEE = 10000;
-        const DEADLINE_DATE = 28;
+        const DEADLINE_DATE = 28; // TANGGAL 28
         const LATE_FEE = 500;
         let currentBill = 0;
+        let selectedFile = null; // Menyimpan file sementara
 
         function initDashboard() {
             if(!window.currentMember) return;
@@ -109,79 +135,171 @@
         if (window.currentMember) initDashboard();
         else window.addEventListener('memberLoaded', initDashboard);
 
+        // --- 1. LOGIKA TAGIHAN (UPDATED) ---
         async function checkBill() {
             if(!window.supabaseClient || !window.currentMember) return;
             const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+            
             try {
                 const now = new Date();
                 const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-                const { data, error } = await window.supabaseClient.from('transactions').select('*').eq('user_id', window.currentMember.id).eq('status', 'PAID').gte('created_at', startMonth);
+                
+                // Cek apakah ada transaksi LUNAS (PAID) atau SEDANG DICEK (PENDING) bulan ini
+                const { data, error } = await window.supabaseClient
+                    .from('transactions')
+                    .select('status')
+                    .eq('user_id', window.currentMember.id)
+                    .gte('created_at', startMonth)
+                    .in('status', ['PAID', 'PENDING']); // Kita ambil Pending juga
+
                 if(error) throw error;
 
                 const badge = document.getElementById('statusBadge');
                 const bg = document.getElementById('cardBg');
                 const btn = document.getElementById('payButton');
+                const detail = document.getElementById('billDetail');
+                const amount = document.getElementById('billAmount');
 
+                // Jika ada data (Entah PAID atau PENDING)
                 if(data && data.length > 0) {
-                    document.getElementById('billAmount').innerText = "LUNAS";
-                    document.getElementById('billDetail').innerHTML = "Terima kasih, pembayaran bulan ini diterima.";
-                    badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full border border-green-100 mb-4";
-                    badge.innerHTML = `<span class="text-[10px] font-bold uppercase tracking-widest">Bulan Ini Aman</span>`;
-                    bg.className = "absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-green-50 to-emerald-50 rounded-full z-0 transition duration-500 blur-2xl opacity-70";
-                    btn.classList.add('hidden'); 
+                    const status = data[0].status;
+
+                    if (status === 'PAID') {
+                        // KONDISI 1: SUDAH LUNAS
+                        amount.innerText = "LUNAS";
+                        detail.innerHTML = "Terima kasih, pembayaran diterima.";
+                        badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full border border-green-100 mb-4";
+                        badge.innerHTML = `<span class="text-[10px] font-bold uppercase tracking-widest">Bulan Ini Aman</span>`;
+                        bg.className = "absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-green-50 to-emerald-50 rounded-full z-0 transition duration-500 blur-2xl opacity-70";
+                        btn.classList.add('hidden'); // Sembunyikan tombol bayar
+                    } else {
+                        // KONDISI 2: MENUNGGU ADMIN (PENDING)
+                        amount.innerText = "DIPROSES";
+                        detail.innerHTML = "Admin sedang mengecek bukti bayar.";
+                        badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-50 text-yellow-600 rounded-full border border-yellow-100 mb-4";
+                        badge.innerHTML = `<span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Menunggu Konfirmasi</span>`;
+                        bg.className = "absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-full z-0 transition duration-500 blur-2xl opacity-70";
+                        btn.classList.add('hidden'); // Sembunyikan tombol bayar juga biar gak double
+                    }
+                    
                     currentBill = 0;
                 } else {
+                    // KONDISI 3: BELUM BAYAR (TAGIHAN MUNCUL)
                     const today = now.getDate();
                     let fine = 0;
                     if(today > DEADLINE_DATE) fine = (today - DEADLINE_DATE) * LATE_FEE;
+                    
                     currentBill = BASE_FEE + fine;
-                    document.getElementById('billAmount').innerText = formatRupiah(currentBill);
+                    amount.innerText = formatRupiah(currentBill);
+                    
                     if(fine > 0) {
-                        document.getElementById('billDetail').innerText = `Pokok: ${formatRupiah(BASE_FEE)} + Denda: ${formatRupiah(fine)}`;
+                        detail.innerText = `Pokok: ${formatRupiah(BASE_FEE)} + Denda: ${formatRupiah(fine)}`;
                         badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-full border border-red-100 mb-4";
                         badge.innerHTML = `<span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Telat ${(today - DEADLINE_DATE)} Hari</span>`;
                     } else {
-                        document.getElementById('billDetail').innerText = `Jatuh Tempo: Tgl ${DEADLINE_DATE}`;
+                        detail.innerText = `Jatuh Tempo: Tgl ${DEADLINE_DATE}`;
                         badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full border border-blue-100 mb-4";
                         badge.innerHTML = `<span class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Tagihan Aktif</span>`;
                     }
-                    btn.classList.remove('hidden');
+                    btn.classList.remove('hidden'); // Tampilkan tombol
                 }
             } catch(err) { console.error("Gagal cek tagihan:", err); }
         }
 
+        // --- 2. QRIS LOAD ---
         async function fetchQR() {
             try {
-                const { data } = await window.supabaseClient.from('app_settings').select('value').eq('key', 'qris_url').single();
-                if(data && data.value) document.getElementById('dynamicQRImg').src = data.value + '?t=' + new Date().getTime();
+                const { data } = await window.supabaseClient.from('app_settings').select('value').eq('key', 'qris_url').maybeSingle();
+                const img = document.getElementById('dynamicQRImg');
+                if(data && data.value) img.src = data.value + '?t=' + new Date().getTime();
+                else img.src = "https://placehold.co/200x200?text=QR+Belum+Ada";
             } catch(e) { console.error(e); }
         }
 
-        function openPaymentModal() { document.getElementById('paymentModal').classList.remove('hidden'); resetUI(); fetchQR(); }
-        function closeModal() { document.getElementById('paymentModal').classList.add('hidden'); }
-        function resetUI() { document.getElementById('scanStep').classList.remove('hidden'); document.getElementById('processStep').classList.add('hidden'); document.getElementById('resultStep').classList.add('hidden'); document.getElementById('proofInput').value = ''; }
+        // --- 3. MODAL & PREVIEW LOGIC (INI YANG PENTING) ---
+        function openPaymentModal() { 
+            document.getElementById('paymentModal').classList.remove('hidden'); 
+            resetUI(); 
+            fetchQR(); 
+        }
+        
+        function closeModal() { 
+            document.getElementById('paymentModal').classList.add('hidden'); 
+            checkBill(); // Refresh status tagihan saat tutup
+        }
 
-        async function fetchQR() {
-            try {
-                // Gunakan .maybeSingle() agar tidak error merah jika data belum ada
-                const { data, error } = await window.supabaseClient
-                    .from('app_settings')
-                    .select('value')
-                    .eq('key', 'qris_url')
-                    .maybeSingle();
+        function resetUI() { 
+            document.getElementById('scanStep').classList.remove('hidden'); 
+            document.getElementById('previewStep').classList.add('hidden');
+            document.getElementById('processStep').classList.add('hidden'); 
+            document.getElementById('resultStep').classList.add('hidden'); 
+            document.getElementById('proofInput').value = ''; 
+            selectedFile = null;
+        }
 
-                const imgElement = document.getElementById('dynamicQRImg');
-
-                if (data && data.value) {
-                    // Tambahkan timestamp (?t=...) agar browser dipaksa ambil gambar baru
-                    // Ini penting karena nama file di server kita buat tetap (qris_active.jpg)
-                    imgElement.src = data.value + '?t=' + new Date().getTime();
-                } else {
-                    // Tampilan jika Admin belum upload QRIS
-                    imgElement.src = "https://placehold.co/200x200?text=QR+Belum+Ada";
+        // Saat user pilih file, JANGAN langsung upload. Preview dulu.
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                selectedFile = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imgPreviewResult').src = e.target.result;
+                    
+                    // Pindah Tampilan
+                    document.getElementById('scanStep').classList.add('hidden');
+                    document.getElementById('previewStep').classList.remove('hidden');
                 }
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+
+        // --- 4. PROSES UPLOAD (Setelah klik tombol Kirim) ---
+        async function processUpload() {
+            if (!selectedFile) return;
+
+            // Tampilan Loading
+            document.getElementById('previewStep').classList.add('hidden');
+            document.getElementById('processStep').classList.remove('hidden');
+
+            try {
+                // Compress dulu biar hemat kuota storage
+                const compressed = await compressImage(selectedFile);
+                
+                // OCR Logic (Tetap dipakai)
+                const worker = await Tesseract.createWorker('eng');
+                const { data: { text } } = await worker.recognize(compressed);
+                await worker.terminate();
+
+                const lower = text.toLowerCase();
+                // Deteksi nominal (Ribuan/Polos)
+                const baseBillStr = Math.floor(currentBill/1000).toString(); 
+                const isAmountOk = lower.includes(baseBillStr) || lower.includes(currentBill.toString());
+                const isSuccess = lower.includes('berhasil') || lower.includes('sukses') || lower.includes('success') || lower.includes('paid');
+
+                // Jika OCR bilang OK -> PAID, jika ragu -> PENDING
+                let finalStatus = 'PENDING'; // Default ke Pending (Aman)
+                if (isAmountOk && isSuccess) {
+                    finalStatus = 'PAID';
+                }
+
+                // Upload ke Supabase
+                await saveToDatabase(compressed, finalStatus);
+
+                if (finalStatus === 'PAID') {
+                    showResult('success', 'Pembayaran Lunas!', 'Sistem otomatis mendeteksi bukti valid.');
+                } else {
+                    showResult('manual', 'Berhasil Terkirim!', 'Bukti masuk antrian pengecekan Admin. Status: Menunggu.');
+                }
+
             } catch(e) { 
-                console.error("Gagal memuat QRIS:", e); 
+                console.error(e); 
+                // Jika error, tetap coba upload sebagai PENDING biar user ga kecewa
+                try {
+                    await saveToDatabase(selectedFile, 'PENDING');
+                    showResult('manual', 'Berhasil Terkirim', 'Scan gagal, tapi bukti sudah dikirim ke Admin.');
+                } catch(err2) {
+                    showResult('error', 'Gagal Upload', 'Koneksi bermasalah. Coba lagi.');
+                }
             }
         }
 
@@ -207,45 +325,55 @@
             });
         }
 
-        async function runCheck(file) {
-            try {
-                const worker = await Tesseract.createWorker('eng');
-                const { data: { text } } = await worker.recognize(file);
-                await worker.terminate();
-                const lower = text.toLowerCase();
-                const baseBillStr = Math.floor(currentBill/1000).toString(); 
-                const isAmountOk = lower.includes(baseBillStr) || lower.includes(currentBill.toString());
-                const isSuccess = lower.includes('berhasil') || lower.includes('sukses') || lower.includes('success') || lower.includes('paid');
-
-                if (isAmountOk && isSuccess) { await save(file, 'PAID'); showResult('success', 'Pembayaran Lunas!', 'Sistem mendeteksi nominal sesuai.'); }
-                else { await save(file, 'PENDING'); showResult('manual', 'Verifikasi Manual', 'Bukti berhasil diupload. Admin akan mengecek manual.'); }
-            } catch(e) { console.error(e); showResult('error', 'Gagal', 'Scan gagal memproses gambar.'); }
-        }
-
-        async function save(file, status) {
+        async function saveToDatabase(file, status) {
             if(!window.supabaseClient || !window.currentMember) return;
+            
             const fileName = `receipt_${Date.now()}_${window.currentMember.id}.jpg`;
-            await window.supabaseClient.storage.from('receipts').upload(fileName, file);
+            
+            // 1. Upload Gambar
+            const { error: uploadError } = await window.supabaseClient.storage.from('receipts').upload(fileName, file);
+            if (uploadError) throw uploadError;
+
+            // 2. Ambil URL
             const { data } = window.supabaseClient.storage.from('receipts').getPublicUrl(fileName);
-            await window.supabaseClient.from('transactions').insert({
-                user_id: window.currentMember.id, amount: currentBill, status: status, payment_method: 'QRIS_AUTO', proof_url: data.publicUrl 
+
+            // 3. Insert Transaksi (Ini yang bikin masuk ke Admin)
+            const { error: dbError } = await window.supabaseClient.from('transactions').insert({
+                user_id: window.currentMember.id, 
+                amount: currentBill, 
+                status: status, 
+                payment_method: 'QRIS_AUTO', 
+                proof_url: data.publicUrl 
             });
-            checkBill(); 
+            
+            if (dbError) throw dbError;
         }
 
         function showResult(type, title, desc) {
             document.getElementById('processStep').classList.add('hidden');
             document.getElementById('resultStep').classList.remove('hidden');
+            
             const icon = document.getElementById('iconResult');
             const t = document.getElementById('titleResult');
-            if(type === 'success') { icon.innerHTML = "✓"; icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-green-100 text-green-600 text-4xl"; t.className = "text-xl font-black text-green-600 mb-2"; }
-            else if(type === 'manual') { icon.innerHTML = "?"; icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-yellow-100 text-yellow-600 text-4xl"; t.className = "text-xl font-black text-yellow-600 mb-2"; }
-            else { icon.innerHTML = "✕"; icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-600 text-4xl"; t.className = "text-xl font-black text-red-600 mb-2"; }
-            t.innerText = title; document.getElementById('descResult').innerText = desc;
+            
+            if(type === 'success') { 
+                icon.innerHTML = "✓"; 
+                icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-green-100 text-green-600 text-4xl"; 
+                t.className = "text-xl font-black text-green-600 mb-2"; 
+            } else if(type === 'manual') { 
+                icon.innerHTML = "⏳"; 
+                icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-yellow-100 text-yellow-600 text-4xl"; 
+                t.className = "text-xl font-black text-yellow-600 mb-2"; 
+            } else { 
+                icon.innerHTML = "✕"; 
+                icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-600 text-4xl"; 
+                t.className = "text-xl font-black text-red-600 mb-2"; 
+            }
+            
+            t.innerText = title; 
+            document.getElementById('descResult').innerText = desc;
         }
 
-        // --- LOGOUT MEMBER ---
-        // Kembali ke Portal (../portal.html) sesuai permintaan
         async function logoutMember() {
             if(confirm("Yakin ingin keluar?")) {
                 await window.supabaseClient.auth.signOut();

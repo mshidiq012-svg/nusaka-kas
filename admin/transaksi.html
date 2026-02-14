@@ -18,7 +18,6 @@
 <body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen relative overflow-x-hidden">
 
     <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden"></div>
-
     <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-2xl lg:shadow-none">
         <div class="flex items-center justify-between mb-10 px-2">
             <div class="text-2xl font-extrabold text-blue-600 tracking-tighter flex items-center gap-2">
@@ -30,11 +29,13 @@
             <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600">✕</button>
         </div>
         <nav class="space-y-1.5 flex-1">
-            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> Dashboard</a>
-            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Anggota</a>
-            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> Transaksi</a>
-            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Withdraw</a>
-            <a href="profile.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profile Saya</a>
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> Dashboard</a>
+            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Anggota</a>
+            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> 
+                Transaksi <span id="navPendingBadge" class="hidden bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-auto">0</span>
+            </a>
+            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Withdraw</a>
         </nav>
         <button onclick="logout()" class="flex items-center gap-3 px-4 py-3.5 text-red-500 hover:bg-red-50 rounded-2xl font-bold transition text-sm w-full text-left mt-4 group">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Logout
@@ -53,26 +54,20 @@
                 </div>
             </div>
             
-            <div class="relative group">
-                <button class="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-700 transition transform active:scale-95 text-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                    Download Laporan
-                </button>
-                <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 hidden group-hover:block z-50 overflow-hidden">
-                    <div class="p-1">
-                        <button onclick="TransactionService.exportData('xlsx')" class="w-full text-left px-4 py-2 text-xs font-bold text-slate-600 hover:bg-green-50 hover:text-green-600 rounded-lg transition">Format Excel (.xlsx)</button>
-                    </div>
-                </div>
-            </div>
+            <button onclick="TransactionService.exportData()" class="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-xl font-bold shadow-lg shadow-green-200 hover:bg-green-700 transition transform active:scale-95 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                Export Excel
+            </button>
         </header>
 
         <div class="p-6 lg:p-10 space-y-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-                    <h3 class="font-bold text-slate-900 mb-6 flex items-center gap-2 text-lg">
-                        <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span> Form Pembayaran Manual
-                    </h3>
-                    <form id="formManual" class="space-y-5">
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2 text-lg cursor-pointer" onclick="toggleManualForm()">
+                    <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span> Input Pembayaran Manual (Tunai)
+                    <span class="text-xs text-blue-600 ml-auto bg-blue-50 px-2 py-1 rounded-lg">Klik untuk buka/tutup</span>
+                </h3>
+                <div id="manualFormContainer" class="hidden">
+                    <form id="formManual" class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Pilih Anggota</label>
                             <div class="relative">
@@ -84,27 +79,28 @@
                             <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Nominal (Rp)</label>
                             <input type="number" id="t_amount" required value="10000" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold focus:outline-none focus:border-blue-500 text-lg">
                         </div>
-                        <button type="submit" id="btnSubmitManual" class="w-full py-3.5 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-blue-300 transition-all transform active:scale-95 text-sm mt-2">Simpan Transaksi</button>
+                        <button type="submit" id="btnSubmitManual" class="w-full py-3.5 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 hover:shadow-blue-300 transition-all transform active:scale-95 text-sm">Simpan Data</button>
                     </form>
-                </div>
-
-                <div class="bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-8 rounded-3xl flex flex-col justify-between shadow-xl shadow-blue-200/50 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-white rounded-full opacity-10 blur-2xl -mr-10 -mt-10"></div>
-                    <div class="relative z-10">
-                        <h3 class="text-xl font-bold mb-3 flex items-center gap-2"><span>💡</span> Tips Bendahara</h3>
-                        <p class="text-blue-100 text-sm leading-relaxed mb-6 font-medium">Gunakan form manual untuk anggota yang bayar tunai. Cek tabel di bawah untuk memvalidasi bukti foto.</p>
-                    </div>
-                    <div class="mt-8 bg-black/20 p-5 rounded-2xl backdrop-blur-sm border border-white/10 relative z-10">
-                        <p class="text-xs font-bold uppercase text-blue-200 mb-1 tracking-widest">Total Uang Masuk (Manual)</p>
-                        <p id="totalManualAmount" class="text-3xl font-black tracking-tight">Rp 0</p>
-                    </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <div><h3 class="font-bold text-slate-900 text-lg">Riwayat Semua Transaksi</h3><p class="text-xs text-slate-400 mt-0.5">Termasuk Tunai & QRIS.</p></div>
+            <div class="flex gap-4 border-b border-slate-200">
+                <button onclick="switchTab('pending')" id="tabPending" class="pb-3 px-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition flex items-center gap-2">
+                    Perlu Verifikasi 
+                    <span id="pendingCount" class="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px] hidden">0</span>
+                </button>
+                <button onclick="switchTab('history')" id="tabHistory" class="pb-3 px-4 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition">
+                    Riwayat Transaksi
+                </button>
+            </div>
+
+            <div id="pendingSection" class="min-h-[300px]">
+                <div id="pendingContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <p class="col-span-full text-center py-10 text-slate-400 italic">Memuat data...</p>
                 </div>
+            </div>
+
+            <div id="historySection" class="hidden bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table id="table-tripay" class="w-full text-left">
                         <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold tracking-wider">
@@ -115,41 +111,58 @@
                                 <th class="px-6 py-4">Nominal</th>
                                 <th class="px-6 py-4 text-center">Bukti</th>
                                 <th class="px-6 py-4 text-center">Status</th>
-                                <th class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="tbody-trx" class="divide-y divide-slate-50 text-sm">
-                            <tr><td colspan="7" class="p-8 text-center text-slate-400 text-xs italic">Memuat data...</td></tr>
-                        </tbody>
+                        <tbody id="historyTable" class="divide-y divide-slate-50 text-sm text-slate-600">
+                            </tbody>
                     </table>
                 </div>
             </div>
+
         </div>
     </main>
 
-    <div id="proofModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeProof()">
-        <div class="bg-white p-2 rounded-2xl max-w-sm w-full shadow-2xl relative" onclick="event.stopPropagation()">
-            <button onclick="closeProof()" class="absolute -top-10 right-0 text-white"><svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
-            <img id="proofImg" src="" onerror="this.src='https://placehold.co/600x800/f1f5f9/94a3b8?text=Bukti+Kadaluarsa';" class="w-full h-auto rounded-xl bg-slate-100 object-contain max-h-[70vh]">
-            <div class="p-4 text-center"><a id="downloadBtn" href="#" target="_blank" class="text-xs font-bold text-blue-600 hover:underline">Buka Full Size</a></div>
+    <div id="proofModal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeProof()">
+        <div class="relative w-full max-w-lg" onclick="event.stopPropagation()">
+            <button onclick="closeProof()" class="absolute -top-12 right-0 text-white p-2 hover:bg-white/10 rounded-full transition"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            <img id="proofImg" src="" class="w-full h-auto rounded-2xl shadow-2xl border-4 border-white">
+            <div class="mt-4 text-center">
+                <a id="downloadBtn" href="#" target="_blank" class="inline-block px-6 py-2 bg-white text-slate-900 rounded-full font-bold text-xs hover:bg-slate-200 transition">Buka Original</a>
+            </div>
         </div>
     </div>
 
     <script>
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
+        function toggleManualForm() { document.getElementById('manualFormContainer').classList.toggle('hidden'); }
         
-        // === FUNGSI LOGOUT (PERBAIKAN PATH) ===
         async function logout() {
             if(confirm("Yakin ingin keluar?")) {
                 await window.supabaseClient.auth.signOut();
                 localStorage.clear();
-                window.location.href = '../auth/login.html'; // <--- FIX PATH
+                window.location.href = '../auth/login.html'; 
             }
         }
 
         const UI = {
             formatRupiah: (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n)
         };
+
+        // --- CORE LOGIC ---
+        function switchTab(tab) {
+            document.getElementById('pendingSection').classList.add('hidden');
+            document.getElementById('historySection').classList.add('hidden');
+            document.getElementById('tabPending').className = "pb-3 px-4 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition flex items-center gap-2";
+            document.getElementById('tabHistory').className = "pb-3 px-4 text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition";
+
+            if(tab === 'pending') {
+                document.getElementById('pendingSection').classList.remove('hidden');
+                document.getElementById('tabPending').className = "pb-3 px-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition flex items-center gap-2";
+            } else {
+                document.getElementById('historySection').classList.remove('hidden');
+                document.getElementById('tabHistory').className = "pb-3 px-4 text-sm font-bold border-b-2 border-blue-600 text-blue-600 transition";
+            }
+        }
 
         const TransactionService = {
             loadMembers: async () => {
@@ -167,55 +180,113 @@
                 const amount = document.getElementById('t_amount').value;
 
                 try {
-                    await window.supabaseClient.from('transactions').insert({
+                    const { error } = await window.supabaseClient.from('transactions').insert({
                         user_id: userId, amount: amount, payment_method: 'MANUAL', status: 'PAID', tripay_reference: 'Manual Input'
                     });
+                    if(error) throw error;
                     alert("Berhasil disimpan!");
                     document.getElementById('formManual').reset();
+                    toggleManualForm(); // Tutup form biar rapi
                     TransactionService.loadAllTransactions();
                 } catch (err) { alert(err.message); } 
-                finally { btn.textContent = "Simpan Transaksi"; btn.disabled = false; }
+                finally { btn.textContent = "Simpan Data"; btn.disabled = false; }
             },
 
             loadAllTransactions: async () => {
-                const tbody = document.getElementById('tbody-trx');
                 if (!window.supabaseClient) return;
-                const { data } = await window.supabaseClient.from('transactions').select('*, profiles(full_name)').order('created_at', { ascending: false });
+                const { data, error } = await window.supabaseClient
+                    .from('transactions')
+                    .select('*, profiles(full_name)')
+                    .order('created_at', { ascending: false });
+
+                if (error) return console.error(error);
+
+                const pending = data.filter(x => x.status === 'PENDING');
+                const history = data.filter(x => x.status !== 'PENDING');
+
+                // UPDATE BADGE
+                const pendingCount = pending.length;
+                const badge = document.getElementById('pendingCount');
+                const navBadge = document.getElementById('navPendingBadge');
                 
-                if (!data || data.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-xs">Kosong</td></tr>`; return; }
+                if(pendingCount > 0) {
+                    badge.innerText = pendingCount; badge.classList.remove('hidden');
+                    navBadge.innerText = pendingCount; navBadge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden'); navBadge.classList.add('hidden');
+                }
 
-                // Hitung Total Manual
-                const totalMan = data.filter(x => x.payment_method === 'MANUAL' && x.status === 'PAID').reduce((a,b)=>a+b.amount, 0);
-                document.getElementById('totalManualAmount').innerText = UI.formatRupiah(totalMan);
+                // RENDER PENDING (CARDS)
+                const pendingContainer = document.getElementById('pendingContainer');
+                if(pending.length === 0) {
+                    pendingContainer.innerHTML = `<div class="col-span-full text-center py-10 bg-white rounded-3xl border border-slate-100 border-dashed"><p class="text-slate-400 text-sm">Tidak ada transaksi yang perlu diverifikasi.</p></div>`;
+                } else {
+                    pendingContainer.innerHTML = pending.map(item => `
+                        <div class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col gap-4">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-slate-900">${item.profiles?.full_name || 'Tanpa Nama'}</h3>
+                                    <p class="text-[10px] text-slate-400">${new Date(item.created_at).toLocaleString('id-ID')}</p>
+                                </div>
+                                <span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase animate-pulse">Perlu Cek</span>
+                            </div>
+                            
+                            <div class="relative group cursor-pointer overflow-hidden rounded-xl border border-slate-100 h-40 bg-slate-50" onclick="showProof('${item.proof_url}')">
+                                <img src="${item.proof_url}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><span class="text-white text-xs font-bold flex items-center gap-1"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Perbesar</span></div>
+                            </div>
 
-                tbody.innerHTML = data.map(t => {
-                    let statusBadge = t.status === 'PAID' ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold">LUNAS</span>` : (t.status === 'PENDING' ? `<span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-[10px] font-bold animate-pulse">CEK BUKTI</span>` : `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold">DITOLAK</span>`);
-                    let proofBtn = t.proof_url ? `<button onclick="showProof('${t.proof_url}')" class="text-blue-600 underline text-[10px] font-bold">Lihat</button>` : `<span class="text-slate-300 text-[10px]">-</span>`;
-                    let actions = t.status === 'PENDING' ? `<button onclick="updStatus('${t.id}','PAID')" class="text-green-600 font-bold mr-2">✓</button><button onclick="updStatus('${t.id}','REJECTED')" class="text-red-600 font-bold">✕</button>` : `-`;
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xl font-black text-slate-900">${UI.formatRupiah(item.amount)}</span>
+                            </div>
 
-                    return `<tr class="hover:bg-slate-50 border-b border-slate-50">
-                        <td class="px-6 py-4 text-xs text-slate-500">${new Date(t.created_at).toLocaleDateString('id-ID')}</td>
-                        <td class="px-6 py-4 font-bold text-slate-800 text-sm">${t.profiles?.full_name}</td>
-                        <td class="px-6 py-4 text-xs"><span class="bg-slate-100 px-2 py-1 rounded font-bold text-slate-600">${t.payment_method}</span></td>
-                        <td class="px-6 py-4 font-mono font-bold text-slate-700">${UI.formatRupiah(t.amount)}</td>
-                        <td class="px-6 py-4 text-center">${proofBtn}</td>
-                        <td class="px-6 py-4 text-center">${statusBadge}</td>
-                        <td class="px-6 py-4 text-right text-xs">${actions}</td>
-                    </tr>`;
-                }).join('');
+                            <div class="grid grid-cols-2 gap-3 mt-auto">
+                                <button onclick="processTx('${item.id}', 'REJECTED')" class="py-3 rounded-xl border border-red-100 text-red-500 font-bold text-xs hover:bg-red-50 transition">Tolak</button>
+                                <button onclick="processTx('${item.id}', 'PAID')" class="py-3 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Terima (Lunas)</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // RENDER HISTORY (TABLE)
+                const historyContainer = document.getElementById('historyTable');
+                if(history.length === 0) {
+                    historyContainer.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 text-xs italic">Belum ada riwayat.</td></tr>`;
+                } else {
+                    historyContainer.innerHTML = history.map(t => {
+                        let statusBadge = t.status === 'PAID' ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-[10px] font-bold">LUNAS</span>` : `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-[10px] font-bold">DITOLAK</span>`;
+                        let proofBtn = t.proof_url ? `<button onclick="showProof('${t.proof_url}')" class="text-blue-600 underline text-[10px] font-bold hover:text-blue-800">Lihat Foto</button>` : `<span class="text-slate-300 text-[10px] italic">Manual</span>`;
+
+                        return `<tr class="hover:bg-slate-50 border-b border-slate-50 transition">
+                            <td class="px-6 py-4 text-xs text-slate-500">${new Date(t.created_at).toLocaleDateString('id-ID')}</td>
+                            <td class="px-6 py-4 font-bold text-slate-800 text-sm">${t.profiles?.full_name || 'Hapus'}</td>
+                            <td class="px-6 py-4 text-xs"><span class="bg-slate-100 px-2 py-1 rounded font-bold text-slate-600">${t.payment_method}</span></td>
+                            <td class="px-6 py-4 font-mono font-bold text-slate-700">${UI.formatRupiah(t.amount)}</td>
+                            <td class="px-6 py-4 text-center">${proofBtn}</td>
+                            <td class="px-6 py-4 text-center">${statusBadge}</td>
+                        </tr>`;
+                    }).join('');
+                }
             },
             
-            exportData: (type) => {
+            exportData: () => {
                 const ws = XLSX.utils.table_to_sheet(document.getElementById('table-tripay'));
                 const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Transaksi");
                 XLSX.writeFile(wb, `Laporan_Kas_${new Date().toISOString().slice(0,10)}.xlsx`);
             }
         };
 
-        // Actions
+        // --- GLOBAL ACTIONS ---
         function showProof(url) { document.getElementById('proofImg').src = url; document.getElementById('downloadBtn').href = url; document.getElementById('proofModal').classList.remove('hidden'); }
         function closeProof() { document.getElementById('proofModal').classList.add('hidden'); }
-        async function updStatus(id, status) { if(confirm("Update status?")) { await window.supabaseClient.from('transactions').update({status}).eq('id', id); TransactionService.loadAllTransactions(); } }
+        
+        async function processTx(id, status) {
+            const msg = status === 'PAID' ? "Terima pembayaran ini?" : "Tolak pembayaran ini?";
+            if(confirm(msg)) {
+                await window.supabaseClient.from('transactions').update({status}).eq('id', id);
+                TransactionService.loadAllTransactions(); // Refresh UI
+            }
+        }
 
         document.getElementById('formManual').addEventListener('submit', TransactionService.saveManualTransaction);
         TransactionService.loadMembers();
