@@ -4,21 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Saya | Nusaka Kas</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .animate-pop { animation: popUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes popUp { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        /* Garis Scan Hijau */
-        .scan-line { position: absolute; width: 100%; height: 3px; background: #22c55e; top: 0; animation: scanning 1.5s infinite linear; box-shadow: 0 0 10px #22c55e; }
-        @keyframes scanning { 0% {top: 0;} 50% {top: 100%;} 100% {top: 0;} }
-    </style>
-    
+    <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } .animate-pop { animation: popUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); } @keyframes popUp { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } } .scan-line { position: absolute; width: 100%; height: 3px; background: #22c55e; top: 0; animation: scanning 1.5s infinite linear; box-shadow: 0 0 10px #22c55e; } @keyframes scanning { 0% {top: 0;} 50% {top: 100%;} 100% {top: 0;} } </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
-    
     <script src="member_guard.js"></script> 
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js'></script>
 </head>
@@ -38,32 +28,22 @@
     </nav>
 
     <main class="max-w-4xl mx-auto p-6 pb-24 space-y-8">
-        
         <header>
             <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                Halo, <span id="memberName" class="text-blue-600">Loading...</span> 
-                <span class="animate-bounce">👋</span>
+                Halo, <span id="memberName" class="text-blue-600">...</span> <span class="animate-bounce">👋</span>
             </h1>
-            <p class="text-slate-400 text-sm mt-1 font-medium">Status keuangan bulan ini.</p>
+            <p class="text-slate-400 text-sm mt-1 font-medium">Berikut status keuanganmu bulan ini.</p>
         </header>
 
         <div id="billCard" class="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-200/50 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-blue-100 transition duration-500">
             <div id="cardBg" class="absolute -top-10 -right-10 w-48 h-48 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full z-0 group-hover:scale-110 transition duration-500 blur-2xl opacity-70"></div>
-            
             <div class="relative z-10 text-center md:text-left w-full md:w-auto">
-                <div id="statusBadge" class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-500 rounded-full border border-slate-200 mb-4">
-                    <span class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span>
-                    <span class="text-[10px] font-bold uppercase tracking-widest">Memuat Data...</span>
-                </div>
+                <div id="statusBadge" class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-500 rounded-full border border-slate-200 mb-4"><span class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Memuat...</span></div>
                 <h2 id="billAmount" class="text-5xl font-black text-slate-900 tracking-tighter mb-1">Rp ...</h2>
-                <p id="billDetail" class="text-slate-400 text-sm font-medium flex items-center justify-center md:justify-start gap-2">
-                    Sinkronisasi data...
-                </p>
+                <p id="billDetail" class="text-slate-400 text-sm font-medium flex items-center justify-center md:justify-start gap-2">Cek Tagihan...</p>
             </div>
-
             <button id="payButton" onclick="openPaymentModal()" class="hidden relative z-10 w-full md:w-auto px-10 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-300 hover:bg-blue-600 hover:shadow-blue-200 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 group/btn">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover/btn:scale-110 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6l9-6"></path><path d="M21 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7"></path><path d="M12 13v9"></path></svg>
-                Bayar Sekarang
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover/btn:scale-110 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6l9-6"></path><path d="M21 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7"></path><path d="M12 13v9"></path></svg> Bayar Sekarang
             </button>
         </div>
 
@@ -73,45 +53,36 @@
                     <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold">Transparansi Kas</h3>
-                        <p class="text-blue-100 text-xs mt-0.5 opacity-90 font-medium">Lihat laporan keuangan realtime.</p>
-                    </div>
+                    <div><h3 class="text-lg font-bold">Transparansi Kas</h3><p class="text-blue-100 text-xs mt-0.5 opacity-90 font-medium">Lihat laporan keuangan realtime.</p></div>
                 </div>
             </div>
         </a>
     </main>
 
-    <div id="paymentModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all">
+    <div id="paymentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-all">
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl relative animate-pop overflow-hidden ring-1 ring-slate-100">
             <button onclick="closeModal()" class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center bg-slate-50 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition border border-slate-100"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             
             <div id="scanStep" class="text-center pt-2">
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6l9-6"></path><path d="M21 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7"></path><path d="M12 13v9"></path></svg>
-                </div>
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9 6l9-6"></path><path d="M21 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7"></path><path d="M12 13v9"></path></svg></div>
                 <h3 class="text-xl font-black text-slate-900 mb-1">Scan QRIS</h3>
                 <p class="text-xs text-slate-400 mb-6 font-medium">QRIS ini diupdate oleh Admin.</p>
-                
                 <div class="flex justify-center mb-6">
                     <div class="bg-white p-3 rounded-[1.5rem] border-2 border-dashed border-slate-200 relative group hover:border-blue-300 transition">
                         <img id="dynamicQRImg" src="https://placehold.co/200x200?text=Loading+QR" class="w-52 h-52 object-contain rounded-xl">
                         <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm"><span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">Verified</span></div>
                     </div>
                 </div>
-
                 <div class="relative group w-full">
                     <input type="file" id="proofInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="processImage(this)">
-                    <button class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition shadow-xl shadow-slate-200 transform active:scale-[0.98] flex items-center justify-center gap-2">
-                        Upload Bukti Bayar
-                    </button>
+                    <button class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition shadow-xl shadow-slate-200 transform active:scale-[0.98] flex items-center justify-center gap-2">Upload Bukti Bayar</button>
                 </div>
             </div>
 
             <div id="processStep" class="hidden text-center mt-4">
                 <h3 class="text-lg font-bold text-slate-900 mb-2">Memvalidasi...</h3>
                 <div class="relative rounded-2xl overflow-hidden border border-slate-200 h-56 w-full bg-slate-100 mb-4"><img id="previewImg" class="w-full h-full object-cover opacity-60"><div class="scan-line"></div></div>
-                <p class="text-xs text-slate-400 animate-pulse">Sistem sedang mengecilkan gambar & membaca nominal...</p>
+                <p class="text-xs text-slate-400 animate-pulse">Sistem sedang membaca nominal...</p>
             </div>
 
             <div id="resultStep" class="hidden text-center pt-2">
@@ -124,49 +95,27 @@
     </div>
 
     <script>
-        // === CONFIGURASI ===
         const BASE_FEE = 10000;
         const DEADLINE_DATE = 10;
         const LATE_FEE = 500;
         let currentBill = 0;
 
-        // === FUNGSI INIT (DIPANGGIL SAAT DATA SIAP) ===
         function initDashboard() {
             if(!window.currentMember) return;
-
-            // 1. Set Nama Lengkap
             document.getElementById('memberName').innerText = window.currentMember.full_name;
-
-            // 2. Jalankan Cek Tagihan
             checkBill();
         }
 
-        // Logic Pengecekan Kesiapan Data dari member_guard.js
-        if (window.currentMember) {
-            initDashboard();
-        } else {
-            // Tunggu sinyal dari member_guard.js
-            window.addEventListener('memberLoaded', initDashboard);
-        }
+        if (window.currentMember) initDashboard();
+        else window.addEventListener('memberLoaded', initDashboard);
 
-        // === LOGIC CEK TAGIHAN & DENDA ===
         async function checkBill() {
             if(!window.supabaseClient || !window.currentMember) return;
             const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
-            
             try {
-                // Tentukan awal bulan ini
                 const now = new Date();
                 const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-
-                // Cek Database: Apakah user ini sudah bayar bulan ini?
-                const { data, error } = await window.supabaseClient
-                    .from('transactions')
-                    .select('*')
-                    .eq('user_id', window.currentMember.id)
-                    .eq('status', 'PAID')
-                    .gte('created_at', startMonth);
-
+                const { data, error } = await window.supabaseClient.from('transactions').select('*').eq('user_id', window.currentMember.id).eq('status', 'PAID').gte('created_at', startMonth);
                 if(error) throw error;
 
                 const badge = document.getElementById('statusBadge');
@@ -174,7 +123,6 @@
                 const btn = document.getElementById('payButton');
 
                 if(data && data.length > 0) {
-                    // SUDAH LUNAS
                     document.getElementById('billAmount').innerText = "LUNAS";
                     document.getElementById('billDetail').innerHTML = "Terima kasih, pembayaran bulan ini diterima.";
                     badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 rounded-full border border-green-100 mb-4";
@@ -183,42 +131,29 @@
                     btn.classList.add('hidden'); 
                     currentBill = 0;
                 } else {
-                    // BELUM BAYAR (HITUNG DENDA)
                     const today = now.getDate();
                     let fine = 0;
                     if(today > DEADLINE_DATE) fine = (today - DEADLINE_DATE) * LATE_FEE;
-                    
                     currentBill = BASE_FEE + fine;
-
                     document.getElementById('billAmount').innerText = formatRupiah(currentBill);
-                    
                     if(fine > 0) {
-                        // KENA DENDA
                         document.getElementById('billDetail').innerText = `Pokok: ${formatRupiah(BASE_FEE)} + Denda: ${formatRupiah(fine)}`;
                         badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-full border border-red-100 mb-4";
                         badge.innerHTML = `<span class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Telat ${(today - DEADLINE_DATE)} Hari</span>`;
                     } else {
-                        // BELUM JATUH TEMPO
                         document.getElementById('billDetail').innerText = `Jatuh Tempo: Tgl ${DEADLINE_DATE}`;
                         badge.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full border border-blue-100 mb-4";
                         badge.innerHTML = `<span class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span><span class="text-[10px] font-bold uppercase tracking-widest">Tagihan Aktif</span>`;
                     }
-                    btn.classList.remove('hidden'); // Munculkan tombol bayar
+                    btn.classList.remove('hidden');
                 }
-            } catch(err) {
-                console.error("Gagal cek tagihan:", err);
-                document.getElementById('billAmount').innerText = "Gagal Memuat";
-            }
+            } catch(err) { console.error("Gagal cek tagihan:", err); }
         }
 
-        // === LOGIC MODAL QRIS ===
         async function fetchQR() {
             try {
-                // Ambil gambar QRIS yang diupload Admin
                 const { data } = await window.supabaseClient.from('app_settings').select('value').eq('key', 'qris_url').single();
-                if(data && data.value) {
-                    document.getElementById('dynamicQRImg').src = data.value + '?t=' + new Date().getTime(); // Anti-Cache
-                }
+                if(data && data.value) document.getElementById('dynamicQRImg').src = data.value + '?t=' + new Date().getTime();
             } catch(e) { console.error(e); }
         }
 
@@ -226,32 +161,21 @@
         function closeModal() { document.getElementById('paymentModal').classList.add('hidden'); }
         function resetUI() { document.getElementById('scanStep').classList.remove('hidden'); document.getElementById('processStep').classList.add('hidden'); document.getElementById('resultStep').classList.add('hidden'); document.getElementById('proofInput').value = ''; }
 
-        // === LOGIC OCR, COMPRESSION & UPLOAD ===
         async function processImage(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
-                
                 document.getElementById('scanStep').classList.add('hidden');
                 document.getElementById('processStep').classList.remove('hidden');
                 
-                // 1. KOMPRESI (Agar hemat storage & cepat upload)
                 try {
-                    const compressedFile = await compressImage(file);
-                    
+                    const compressed = await compressImage(file);
                     const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.getElementById('previewImg').src = e.target.result;
-                        runCheck(compressedFile);
-                    };
-                    reader.readAsDataURL(compressedFile);
-                } catch (err) {
-                    console.error(err);
-                    runCheck(file); // Fallback jika kompresi gagal
-                }
+                    reader.onload = e => { document.getElementById('previewImg').src = e.target.result; runCheck(compressed); };
+                    reader.readAsDataURL(compressed);
+                } catch(e) { console.error(e); runCheck(file); }
             }
         }
 
-        // Helper Kompresi
         function compressImage(file) {
             return new Promise((resolve, reject) => {
                 const maxWidth = 800; 
@@ -267,9 +191,7 @@
                         canvas.width = w; canvas.height = h;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img,0,0,w,h);
-                        canvas.toBlob(blob => {
-                            resolve(new File([blob], file.name, {type: 'image/jpeg', lastModified: Date.now()}));
-                        }, 'image/jpeg', 0.7);
+                        canvas.toBlob(blob => { resolve(new File([blob], file.name, {type: 'image/jpeg', lastModified: Date.now()})); }, 'image/jpeg', 0.7);
                     };
                     img.onerror = reject;
                 };
@@ -282,39 +204,23 @@
                 const { data: { text } } = await worker.recognize(file);
                 await worker.terminate();
                 const lower = text.toLowerCase();
-                
-                // OCR logic: Cek ribuan depan saja agar lebih toleran (misal 10500 -> 10)
                 const baseBillStr = Math.floor(currentBill/1000).toString(); 
                 const isAmountOk = lower.includes(baseBillStr) || lower.includes(currentBill.toString());
                 const isSuccess = lower.includes('berhasil') || lower.includes('sukses') || lower.includes('success') || lower.includes('paid');
 
-                if (isAmountOk && isSuccess) {
-                    await save(file, 'PAID');
-                    showResult('success', 'Pembayaran Lunas!', 'Sistem mendeteksi nominal sesuai.');
-                } else {
-                    await save(file, 'PENDING');
-                    showResult('manual', 'Verifikasi Manual', 'Bukti berhasil diupload. Admin akan mengecek manual.');
-                }
+                if (isAmountOk && isSuccess) { await save(file, 'PAID'); showResult('success', 'Pembayaran Lunas!', 'Sistem mendeteksi nominal sesuai.'); }
+                else { await save(file, 'PENDING'); showResult('manual', 'Verifikasi Manual', 'Bukti berhasil diupload. Admin akan mengecek manual.'); }
             } catch(e) { console.error(e); showResult('error', 'Gagal', 'Scan gagal memproses gambar.'); }
         }
 
         async function save(file, status) {
             if(!window.supabaseClient || !window.currentMember) return;
             const fileName = `receipt_${Date.now()}_${window.currentMember.id}.jpg`;
-            
-            // Upload
             await window.supabaseClient.storage.from('receipts').upload(fileName, file);
             const { data } = window.supabaseClient.storage.from('receipts').getPublicUrl(fileName);
-            
-            // Insert DB
             await window.supabaseClient.from('transactions').insert({
-                user_id: window.currentMember.id, 
-                amount: currentBill, 
-                status: status, 
-                payment_method: 'QRIS_AUTO', 
-                proof_url: data.publicUrl 
+                user_id: window.currentMember.id, amount: currentBill, status: status, payment_method: 'QRIS_AUTO', proof_url: data.publicUrl 
             });
-            
             checkBill(); 
         }
 
@@ -323,22 +229,20 @@
             document.getElementById('resultStep').classList.remove('hidden');
             const icon = document.getElementById('iconResult');
             const t = document.getElementById('titleResult');
-            
-            if(type === 'success') { 
-                icon.innerHTML = "✓"; 
-                icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-green-100 text-green-600 text-4xl"; 
-                t.className = "text-xl font-black text-green-600 mb-2"; 
-            } else if(type === 'manual') { 
-                icon.innerHTML = "?"; 
-                icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-yellow-100 text-yellow-600 text-4xl"; 
-                t.className = "text-xl font-black text-yellow-600 mb-2"; 
-            } else { 
-                icon.innerHTML = "✕"; 
-                icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-600 text-4xl"; 
-                t.className = "text-xl font-black text-red-600 mb-2"; 
+            if(type === 'success') { icon.innerHTML = "✓"; icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-green-100 text-green-600 text-4xl"; t.className = "text-xl font-black text-green-600 mb-2"; }
+            else if(type === 'manual') { icon.innerHTML = "?"; icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-yellow-100 text-yellow-600 text-4xl"; t.className = "text-xl font-black text-yellow-600 mb-2"; }
+            else { icon.innerHTML = "✕"; icon.className = "w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 bg-red-100 text-red-600 text-4xl"; t.className = "text-xl font-black text-red-600 mb-2"; }
+            t.innerText = title; document.getElementById('descResult').innerText = desc;
+        }
+
+        // --- LOGOUT MEMBER ---
+        // Kembali ke Portal (../portal.html) sesuai permintaan
+        async function logoutMember() {
+            if(confirm("Yakin ingin keluar?")) {
+                await window.supabaseClient.auth.signOut();
+                localStorage.clear();
+                window.location.href = '../portal.html'; 
             }
-            t.innerText = title; 
-            document.getElementById('descResult').innerText = desc;
         }
     </script>
 </body>

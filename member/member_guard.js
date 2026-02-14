@@ -1,64 +1,69 @@
 // ============================================================
 // FILE: member_guard.js
-// FUNGSI: Proteksi Member + Load Data + Auto Logout
+// FUNGSI: Menjaga Halaman Member (Satpam)
 // ============================================================
 
 (function() {
-    // Sembunyikan halaman agar tidak berkedip
+    // 1. Sembunyikan halaman biar gak kedip (Blank putih dulu)
     document.documentElement.style.display = 'none';
 
     async function checkMemberAuth() {
-        // Tunggu config.js
+        // Cek 1: Apakah Config Supabase sudah load?
         if (!window.supabaseClient) {
+            // Kalau belum, tunggu 50ms lalu cek lagi (Looping)
             setTimeout(checkMemberAuth, 50);
             return;
         }
 
         const supabase = window.supabaseClient;
 
-        // 1. Cek Sesi Login Supabase
-        const { data: { session } } = await supabase.auth.getSession();
+        // Cek 2: Ambil Session (Tiket Masuk)
+        const { data: { session }, error } = await supabase.auth.getSession();
 
-        if (!session) {
-            // Jika tidak ada sesi, tendang ke Portal Login
-            window.location.href = 'portal.html'; // Sesuai request Anda
+        // JIKA TIDAK ADA SESI (BELUM LOGIN)
+        if (!session || error) {
+            console.warn("Sesi tidak ditemukan, melempar ke portal...");
+            // PERBAIKAN: Gunakan '../' untuk mundur ke folder utama
+            window.location.replace('../portal.html'); 
             return;
         }
 
-        // 2. Ambil Data Profil Member
+        // Cek 3: Ambil Data Profil (Pastikan dia benar Member)
         try {
-            const { data: profile, error } = await supabase
+            const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', session.user.id)
                 .single();
 
-            if (error || !profile) {
-                console.error("Gagal load profil:", error);
+            if (profileError || !profile) {
+                console.error("Profil tidak ditemukan di database!");
                 await supabase.auth.signOut();
-                window.location.href = 'portal.html';
+                window.location.replace('../portal.html');
                 return;
             }
 
-            // 3. Simpan Data ke Global Variable (PENTING UNTUK DASHBOARD)
+            // === LOGIN SUKSES ===
+            
+            // A. Simpan data user ke Global Variable (Biar Dashboard bisa baca)
             window.currentMember = profile;
 
-            // 4. Tampilkan Halaman
+            // B. Tampilkan Halaman (Buka Tirai)
             document.documentElement.style.display = 'block';
 
-            // 5. Beritahu Dashboard bahwa data siap (Fix masalah nama/tagihan loading terus)
+            // C. Teriak ke Dashboard: "WOI DATA UDAH SIAP NIH!"
             window.dispatchEvent(new Event('memberLoaded'));
 
-            // 6. Jalankan Timer Auto-Logout
-            inactivityTime();
+            // D. Jalankan Timer Auto-Logout (Opsional)
+            startInactivityTimer();
 
         } catch (err) {
             console.error("Auth Error:", err);
-            window.location.href = 'portal.html';
+            window.location.replace('../portal.html');
         }
     }
 
-    // Jalankan saat load
+    // Jalankan pengecekan saat browser siap
     if (document.readyState === 'loading') {
         document.addEventListener("DOMContentLoaded", checkMemberAuth);
     } else {
@@ -67,37 +72,30 @@
 })();
 
 // ==========================================
-// FITUR AUTO-LOGOUT (5 MENIT)
+// HELPER: AUTO LOGOUT & MANUAL LOGOUT
 // ==========================================
-let inactivityTime = function () {
+function startInactivityTimer() {
     let time;
-    
-    // Reset timer jika ada aktivitas
     window.onload = resetTimer;
     document.onmousemove = resetTimer;
     document.onkeypress = resetTimer;
-    document.onclick = resetTimer;
-    document.ontouchstart = resetTimer; // Tambahan untuk Mobile
+    document.ontouchstart = resetTimer;
 
     function logout() {
-        alert("Sesi berakhir karena tidak ada aktivitas selama 5 menit.");
+        alert("Sesi habis (5 menit tidak aktif). Silakan login lagi.");
         logoutMember();
     }
 
     function resetTimer() {
         clearTimeout(time);
-        // 5 Menit = 300000 milidetik
-        time = setTimeout(logout, 300000);
+        time = setTimeout(logout, 300000); // 5 Menit
     }
-};
+}
 
-// ==========================================
-// FUNGSI LOGOUT MANUAL (SUPABASE)
-// ==========================================
 window.logoutMember = async function() {
-    if(window.supabaseClient) {
-        await window.supabaseClient.auth.signOut();
+    if (confirm("Yakin ingin keluar?")) {
+        if(window.supabaseClient) await window.supabaseClient.auth.signOut();
+        localStorage.clear();
+        window.location.replace('../portal.html');
     }
-    localStorage.clear(); // Bersihkan sisa-sisa cache
-    window.location.href = 'portal.html';
 };
