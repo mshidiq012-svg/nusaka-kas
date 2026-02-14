@@ -1,13 +1,13 @@
 // ============================================================
-// FILE: member_guard.js (DIPERBAIKI)
+// FILE: member_guard.js (Fixed Path)
 // ============================================================
 
 (function() {
-    // 1. Sembunyikan halaman biar gak kedip
+    // 1. Sembunyikan halaman biar gak kedip (Blank putih dulu)
     document.documentElement.style.display = 'none';
 
     async function checkMemberAuth() {
-        // Cek 1: Config Supabase
+        // Cek Config
         if (!window.supabaseClient) {
             setTimeout(checkMemberAuth, 50);
             return;
@@ -15,18 +15,17 @@
 
         const supabase = window.supabaseClient;
 
-        // Cek 2: Ambil Session
+        // 2. Cek Sesi Login
         const { data: { session }, error } = await supabase.auth.getSession();
 
-        // JIKA GAGAL DAPAT SESI
         if (!session || error) {
-            console.warn("Guard: Tidak ada sesi login.");
-            // PERBAIKAN: Gunakan 'portal.html' karena satu folder dengan dashboard
-            window.location.replace('portal.html'); 
+            console.warn("Akses ditolak: Tidak ada sesi.");
+            // Karena satu folder, cukup panggil nama file
+            window.location.replace('portal.html');
             return;
         }
 
-        // Cek 3: Ambil Data Profil
+        // 3. Cek Profil (Pastikan Data Bisa Dibaca)
         try {
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
@@ -34,24 +33,22 @@
                 .eq('id', session.user.id)
                 .single();
 
-            // JIKA GAGAL DAPAT PROFIL (Biasanya karena RLS)
+            // Jika Error membaca profil (Biasanya karena RLS di Supabase belum diset)
             if (profileError || !profile) {
-                console.error("Guard Error:", profileError);
-                alert("Gagal memuat profil! Cek Policies (RLS) di Supabase."); // Alert Debugging
-                
+                console.error("Gagal baca profil. Cek RLS Supabase!", profileError);
+                alert("Gagal memuat data profil. Silakan login ulang.");
                 await supabase.auth.signOut();
                 window.location.replace('portal.html');
                 return;
             }
 
-            // === LOGIN SUKSES ===
+            // === SUKSES: BUKA HALAMAN ===
             window.currentMember = profile;
             document.documentElement.style.display = 'block';
             window.dispatchEvent(new Event('memberLoaded'));
-            startInactivityTimer();
 
         } catch (err) {
-            console.error("Critical Auth Error:", err);
+            console.error("Guard Error:", err);
             window.location.replace('portal.html');
         }
     }
@@ -62,31 +59,3 @@
         checkMemberAuth();
     }
 })();
-
-// HELPER: AUTO LOGOUT
-function startInactivityTimer() {
-    let time;
-    window.onload = resetTimer;
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
-    document.ontouchstart = resetTimer;
-
-    function logout() {
-        // Hapus alert jika mengganggu, ini cuma penanda
-        // alert("Sesi habis (5 menit)."); 
-        logoutMember();
-    }
-
-    function resetTimer() {
-        clearTimeout(time);
-        time = setTimeout(logout, 300000); // 5 Menit
-    }
-}
-
-window.logoutMember = async function() {
-    if (confirm("Yakin ingin keluar?")) {
-        if(window.supabaseClient) await window.supabaseClient.auth.signOut();
-        localStorage.clear();
-        window.location.replace('portal.html');
-    }
-};
