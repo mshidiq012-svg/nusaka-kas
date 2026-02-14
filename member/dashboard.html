@@ -161,18 +161,27 @@
         function closeModal() { document.getElementById('paymentModal').classList.add('hidden'); }
         function resetUI() { document.getElementById('scanStep').classList.remove('hidden'); document.getElementById('processStep').classList.add('hidden'); document.getElementById('resultStep').classList.add('hidden'); document.getElementById('proofInput').value = ''; }
 
-        async function processImage(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                document.getElementById('scanStep').classList.add('hidden');
-                document.getElementById('processStep').classList.remove('hidden');
-                
-                try {
-                    const compressed = await compressImage(file);
-                    const reader = new FileReader();
-                    reader.onload = e => { document.getElementById('previewImg').src = e.target.result; runCheck(compressed); };
-                    reader.readAsDataURL(compressed);
-                } catch(e) { console.error(e); runCheck(file); }
+        async function fetchQR() {
+            try {
+                // Gunakan .maybeSingle() agar tidak error merah jika data belum ada
+                const { data, error } = await window.supabaseClient
+                    .from('app_settings')
+                    .select('value')
+                    .eq('key', 'qris_url')
+                    .maybeSingle();
+
+                const imgElement = document.getElementById('dynamicQRImg');
+
+                if (data && data.value) {
+                    // Tambahkan timestamp (?t=...) agar browser dipaksa ambil gambar baru
+                    // Ini penting karena nama file di server kita buat tetap (qris_active.jpg)
+                    imgElement.src = data.value + '?t=' + new Date().getTime();
+                } else {
+                    // Tampilan jika Admin belum upload QRIS
+                    imgElement.src = "https://placehold.co/200x200?text=QR+Belum+Ada";
+                }
+            } catch(e) { 
+                console.error("Gagal memuat QRIS:", e); 
             }
         }
 

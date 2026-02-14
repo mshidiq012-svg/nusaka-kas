@@ -123,105 +123,187 @@
         </div>
     </main>
 
-    <script>
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); document.getElementById('sidebarOverlay').classList.toggle('hidden'); }
-        function copyLink(type) {
-            const url = type === 'portal' ? window.location.origin + '/member/portal.html' : window.location.origin + '/public/transparansi.html';
-            navigator.clipboard.writeText(url); alert('Link disalin!');
-        }
-        async function logout() { if(confirm("Yakin?")) { await window.supabaseClient.auth.signOut(); localStorage.clear(); window.location.href = '../auth/login.html'; } }
+<script>
+    // --- FITUR DASAR ---
+    function toggleSidebar() { 
+        document.getElementById('sidebar').classList.toggle('-translate-x-full'); 
+        document.getElementById('sidebarOverlay').classList.toggle('hidden'); 
+    }
+    
+    function copyLink(type) {
+        const url = type === 'portal' ? window.location.origin + '/member/portal.html' : window.location.origin + '/public/transparansi.html';
+        navigator.clipboard.writeText(url); 
+        alert('Link disalin!');
+    }
 
-        const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+    const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
 
-        async function loadData() {
-            if(!window.supabaseClient) return;
-            try {
-                // Load User
-                const { data: { user } } = await window.supabaseClient.auth.getUser();
-                if(user) {
-                    const { data: profile } = await window.supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
-                    if(profile) document.getElementById('adminAvatar').innerText = profile.full_name.substring(0,2).toUpperCase();
-                }
+    // --- LOGOUT ---
+    async function logout() { 
+        if(confirm("Yakin ingin keluar?")) { 
+            await window.supabaseClient.auth.signOut(); 
+            localStorage.clear(); 
+            window.location.href = '../auth/login.html'; 
+        } 
+    }
 
-                // Stats
-                const { data: inc } = await window.supabaseClient.from('transactions').select('amount, created_at').eq('status', 'PAID');
-                const { data: out } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
-                const totalIn = inc?.reduce((a,b)=>a+b.amount,0) || 0;
-                const totalOut = out?.reduce((a,b)=>a+b.amount,0) || 0;
-                document.getElementById('totalSaldo').innerText = formatRupiah(totalIn - totalOut);
+    // --- LOAD DATA DASHBOARD ---
+    async function loadData() {
+        if(!window.supabaseClient) return;
 
-                const now = new Date();
-                const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-                const incMonth = inc?.filter(x => x.created_at >= startMonth).reduce((a,b)=>a+b.amount,0) || 0;
-                document.getElementById('incomeMonth').innerText = formatRupiah(incMonth);
-
-                const { count } = await window.supabaseClient.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'member');
-                document.getElementById('totalMembers').innerText = (count || 0) + " Org";
-
-                // Load 5 Transactions
-                const { data: recent } = await window.supabaseClient.from('transactions').select('amount, created_at, payment_method, profiles:user_id(full_name)').eq('status', 'PAID').order('created_at', { ascending: false }).limit(5);
-                const listContainer = document.getElementById('recentTxList');
-                if (recent && recent.length > 0) {
-                    listContainer.innerHTML = recent.map(tx => `
-                        <div class="flex justify-between items-center group border-b border-slate-50 pb-4 last:border-0">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">${tx.profiles?.full_name ? tx.profiles.full_name.substring(0,2).toUpperCase() : '?'}</div>
-                                <div><p class="text-sm font-bold text-slate-800">${tx.profiles?.full_name || 'Tanpa Nama'}</p><p class="text-[10px] text-slate-400 font-medium">${new Date(tx.created_at).toLocaleDateString('id-ID')} • ${tx.payment_method}</p></div>
-                            </div>
-                            <span class="text-sm font-extrabold text-emerald-600">+ ${formatRupiah(tx.amount)}</span>
-                        </div>
-                    `).join('');
-                } else { listContainer.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi.</p>`; }
-
-                // Load QRIS Image (PERBAIKAN LOGIC)
-                const { data: qrData } = await window.supabaseClient.from('app_settings').select('value').eq('key', 'qris_url').single();
-                if (qrData && qrData.value) {
-                    console.log("QRIS URL:", qrData.value);
-                    const img = document.getElementById('currentQRImg');
-                    img.src = `${qrData.value}?t=${new Date().getTime()}`; // Anti-cache
-                    img.onerror = function() { this.src = "https://placehold.co/200?text=Gambar+Rusak"; }
-                }
-
-            } catch (err) { console.error("Error LoadData:", err); }
-        }
-
-        // Upload
-        function previewUpload(input) {
-            if (input.files[0]) {
-                const r = new FileReader();
-                r.onload = e => {
-                    document.getElementById('currentQRImg').src = e.target.result;
-                    document.getElementById('actionButtons').classList.remove('hidden');
-                    document.getElementById('uploadBox').innerHTML = `File: ${input.files[0].name}`;
-                }
-                r.readAsDataURL(input.files[0]);
+        try {
+            // 1. Cek Admin
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if(user) {
+                const { data: profile } = await window.supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
+                if(profile) document.getElementById('adminAvatar').innerText = profile.full_name.substring(0,2).toUpperCase();
             }
+
+            // 2. Hitung Statistik
+            const { data: inc } = await window.supabaseClient.from('transactions').select('amount, created_at').eq('status', 'PAID');
+            const { data: out } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
+            
+            const totalIn = inc?.reduce((a,b)=>a+b.amount,0) || 0;
+            const totalOut = out?.reduce((a,b)=>a+b.amount,0) || 0;
+            document.getElementById('totalSaldo').innerText = formatRupiah(totalIn - totalOut);
+
+            const now = new Date();
+            const startMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            const incMonth = inc?.filter(x => x.created_at >= startMonth).reduce((a,b)=>a+b.amount,0) || 0;
+            document.getElementById('incomeMonth').innerText = formatRupiah(incMonth);
+
+            const { count } = await window.supabaseClient.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'member');
+            document.getElementById('totalMembers').innerText = (count || 0) + " Org";
+
+            // 3. List Transaksi
+            const { data: recent } = await window.supabaseClient.from('transactions')
+                .select('amount, created_at, payment_method, profiles:user_id(full_name)')
+                .eq('status', 'PAID')
+                .order('created_at', { ascending: false })
+                .limit(5);
+            
+            const listContainer = document.getElementById('recentTxList');
+            if (recent && recent.length > 0) {
+                listContainer.innerHTML = recent.map(tx => `
+                    <div class="flex justify-between items-center group border-b border-slate-50 pb-4 last:border-0">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">${tx.profiles?.full_name ? tx.profiles.full_name.substring(0,2).toUpperCase() : '?'}</div>
+                            <div><p class="text-sm font-bold text-slate-800">${tx.profiles?.full_name || 'Tanpa Nama'}</p><p class="text-[10px] text-slate-400 font-medium">${new Date(tx.created_at).toLocaleDateString('id-ID')} • ${tx.payment_method}</p></div>
+                        </div>
+                        <span class="text-sm font-extrabold text-emerald-600">+ ${formatRupiah(tx.amount)}</span>
+                    </div>
+                `).join('');
+            } else { 
+                listContainer.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi.</p>`; 
+            }
+
+            // 4. LOAD GAMBAR QRIS (FIXED)
+            // Kita gunakan .maybeSingle() agar tidak error jika data kosong
+            const { data: qrData, error: qrError } = await window.supabaseClient
+                .from('app_settings')
+                .select('value')
+                .eq('key', 'qris_url')
+                .maybeSingle();
+
+            if (qrData && qrData.value) {
+                // Tambahkan timestamp agar gambar ke-refresh di browser
+                document.getElementById('currentQRImg').src = qrData.value + '?t=' + new Date().getTime();
+            } else {
+                console.log("QRIS belum diset di database");
+                document.getElementById('currentQRImg').src = "https://placehold.co/200?text=QR+Belum+Ada";
+            }
+
+        } catch (err) { 
+            console.error("Error LoadData:", err); 
         }
-        function cancelUpload() {
+    }
+
+    // --- LOGIKA UPLOAD QRIS (FIXED) ---
+    function previewUpload(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('currentQRImg').src = e.target.result;
+                document.getElementById('actionButtons').classList.remove('hidden');
+                document.getElementById('uploadBox').innerHTML = `<span class="text-slate-800">${input.files[0].name}</span>`;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function cancelUpload() {
+        document.getElementById('actionButtons').classList.add('hidden');
+        document.getElementById('qrisInput').value = ''; // Reset input file
+        document.getElementById('uploadBox').innerHTML = `<span>Klik untuk Pilih Gambar Baru</span>`;
+        loadData(); // Kembalikan ke gambar asli dari server
+    }
+
+    async function uploadQRIS() {
+        const fileInput = document.getElementById('qrisInput');
+        const file = fileInput.files[0];
+        
+        if (!file) return alert("Pilih file dulu!");
+
+        const btn = document.getElementById('btnSaveQR');
+        const originalText = btn.innerText;
+        btn.innerText = 'Menyimpan...';
+        btn.disabled = true;
+
+        try {
+            const supabase = window.supabaseClient;
+            
+            // 1. Upload File ke Storage
+            // Gunakan nama file yang unik & bersih
+            const fileExt = file.name.split('.').pop();
+            const fileName = `qris_active.${fileExt}`; // Kita timpa file lama biar hemat storage
+            
+            // Opsi upsert: true (timpa file jika nama sama)
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('app-assets')
+                .upload(fileName, file, { upsert: true, cacheControl: '0' });
+
+            if (uploadError) throw new Error("Gagal Upload Storage: " + uploadError.message);
+
+            // 2. Ambil Public URL
+            const { data: urlData } = supabase.storage
+                .from('app-assets')
+                .getPublicUrl(fileName);
+
+            if (!urlData.publicUrl) throw new Error("Gagal generate URL Public");
+
+            console.log("URL Baru:", urlData.publicUrl);
+
+            // 3. Simpan URL ke Database (app_settings)
+            const { error: dbError } = await supabase
+                .from('app_settings')
+                .upsert({ 
+                    key: 'qris_url', 
+                    value: urlData.publicUrl,
+                    updated_at: new Date()
+                });
+
+            if (dbError) throw new Error("Gagal Simpan ke Database: " + dbError.message);
+
+            alert("QRIS Berhasil Diupdate!");
+            
+            // Sembunyikan tombol aksi
             document.getElementById('actionButtons').classList.add('hidden');
-            document.getElementById('qrisInput').value = '';
             document.getElementById('uploadBox').innerHTML = `<span>Klik untuk Pilih Gambar Baru</span>`;
+            
+            // Reload agar tampilan benar-benar sinkron
             loadData();
+
+        } catch (e) {
+            console.error(e);
+            alert("Terjadi Kesalahan: " + e.message);
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
         }
-        async function uploadQRIS() {
-            const file = document.getElementById('qrisInput').files[0]; if(!file) return;
-            const btn = document.getElementById('btnSaveQR'); btn.innerHTML = 'Mengupload...'; btn.disabled = true;
-            try {
-                // Hapus file lama dulu (opsional tapi baik untuk kebersihan)
-                // Upload file baru dengan nama unik
-                const fileName = `qris_${Date.now()}.jpg`;
-                const { error: uploadError } = await window.supabaseClient.storage.from('app-assets').upload(fileName, file, { cacheControl: '0', upsert: false });
-                if(uploadError) throw uploadError;
+    }
 
-                const { data: urlData } = window.supabaseClient.storage.from('app-assets').getPublicUrl(fileName);
-                await window.supabaseClient.from('app_settings').upsert({ key: 'qris_url', value: urlData.publicUrl, updated_at: new Date() });
-
-                alert("QRIS Berhasil Diupdate!"); cancelUpload();
-            } catch(e) { alert("Gagal: " + e.message); }
-            finally { btn.innerHTML = 'Simpan & Update'; btn.disabled = false; }
-        }
-
-        loadData();
-    </script>
+    // Jalankan saat halaman siap
+    loadData();
+</script>
 </body>
 </html>
