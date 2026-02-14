@@ -1,60 +1,93 @@
 // ============================================================
-// FILE: auth_guard.js
-// FUNGSI: Proteksi Halaman Admin
+// FILE: member_guard.js
+// FUNGSI: Proteksi Halaman Member + Load Data User
 // ============================================================
 
 (function() {
-    // 1. SEMBUNYIKAN HALAMAN (BIAR GAK KELIHATAN SEBELUM CEK LOGIN)
+    // 1. SEMBUNYIKAN HALAMAN (ANTI-FLICKER)
+    // Halaman akan blank putih sampai pengecekan selesai, biar user gak lihat isinya kalau belum login.
     document.documentElement.style.display = 'none';
 
-    async function checkAuth() {
-        // Tunggu sebentar memastikan config.js sudah load
+    async function checkMemberAuth() {
+        // Tunggu sebentar jika config.js belum selesai loading
         if (!window.supabaseClient) {
-            console.warn("AuthGuard: Menunggu Supabase...");
-            setTimeout(checkAuth, 50); // Cek lagi dalam 50ms
+            setTimeout(checkMemberAuth, 50);
             return;
         }
 
         const supabase = window.supabaseClient;
 
-        // 2. CEK APAKAH ADA USER LOGIN?
+        // 2. CEK SESI LOGIN
         const { data: { session } } = await supabase.auth.getSession();
 
         if (!session) {
-            // KALAU GAK ADA SESI -> LEMPAR KE LOGIN
-            window.location.replace('../auth/login.html');
-        } else {
-            // KALAU ADA SESI -> CEK ROLE
-            // Kita cek profilnya sebentar
-            const { data: profile } = await supabase
+            // Belum login -> Tendang ke halaman login
+            window.location.replace('login.html'); 
+            return;
+        }
+
+        // 3. AMBIL DATA PROFILE (PENTING: Dashboard butuh data ini)
+        try {
+            const { data: profile, error } = await supabase
                 .from('profiles')
-                .select('role')
+                .select('*')
                 .eq('id', session.user.id)
                 .single();
 
-            // Jika role valid (admin/superadmin)
-            if (profile && (profile.role === 'admin' || profile.role === 'superadmin')) {
-                // === SUKSES: BUKA TIRAI (TAMPILKAN HALAMAN) ===
-                document.documentElement.style.display = 'block';
-            } else {
-                // Jika login tapi bukan admin (misal member nyasar)
-                alert("Anda bukan Admin!");
+            if (error || !profile) {
+                console.error("Gagal load profil:", error);
                 await supabase.auth.signOut();
-                window.location.replace('../auth/login.html');
+                window.location.replace('login.html');
+                return;
             }
+
+            // 4. CEK ROLE (Harus Member)
+            // Jika admin iseng masuk ke halaman member, tetap bisa (opsional), 
+            // tapi kalau mau strict, uncomment blok di bawah:
+            /*
+            if (profile.role !== 'member') {
+                alert("Anda bukan Member!");
+                await supabase.auth.signOut();
+                window.location.replace('login.html');
+                return;
+            }
+            */
+
+            // 5. SIMPAN DATA KE GLOBAL VARIABLE (AGAR BISA DIPAKAI DASHBOARD)
+            window.currentMember = profile;
+
+            // 6. BUKA TIRAI (TAMPILKAN HALAMAN)
+            document.documentElement.style.display = 'block';
+
+            // 7. TRIGGER EVENT (Memberitahu dashboard.html bahwa data sudah siap)
+            // Ini yang memperbaiki masalah "Nama tidak muncul" atau "Rp..."
+            window.dispatchEvent(new Event('memberLoaded'));
+
+        } catch (err) {
+            console.error("Auth Error:", err);
+            window.location.replace('login.html');
         }
     }
 
-    // Jalankan pengecekan
-    document.addEventListener("DOMContentLoaded", checkAuth);
+    // Jalankan saat browser siap
+    if (document.readyState === 'loading') {
+        document.addEventListener("DOMContentLoaded", checkMemberAuth);
+    } else {
+        checkMemberAuth();
+    }
 })();
 
-// FUNGSI LOGOUT GLOBAL (Bisa dipanggil dari tombol HTML)
-window.logout = async function() {
+// FUNGSI LOGOUT MEMBER (Dipanggil dari tombol di Navbar)
+window.logoutMember = async function() {
     const supabase = window.supabaseClient;
-    if (confirm("Yakin ingin keluar?")) {
-        await supabase.auth.signOut();
-        localStorage.clear();
-        window.location.replace('../auth/login.html');
+    if (confirm("Apakah Anda yakin ingin keluar?")) {
+        try {
+            await supabase.auth.signOut();
+            localStorage.clear(); // Bersihkan cache lokal
+            window.location.replace('login.html');
+        } catch (error) {
+            console.error("Logout error:", error);
+            window.location.replace('login.html');
+        }
     }
 };
