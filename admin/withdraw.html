@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Withdraw & Pengeluaran | Nusaka Kas</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,51 +23,75 @@
     <script src="../config.js"></script>
     <script src="../auth_guard.js"></script>
 </head>
-<body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen">
+<body class="bg-[#F8FAFC] text-slate-600 flex min-h-screen relative overflow-x-hidden">
 
-    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-30 hidden lg:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-lg lg:shadow-none">
-        <div class="flex items-center justify-between mb-8 px-2">
-            <div class="text-2xl font-bold text-blue-600 tracking-tighter">NUSAKA<span class="text-slate-800 text-sm italic">kas</span></div>
-            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400">✕</button>
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 p-6 z-40 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-2xl lg:shadow-none">
+        <div class="flex items-center justify-between mb-10 px-2">
+            <div class="text-2xl font-extrabold text-blue-600 tracking-tighter flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                NUSAKA<span class="text-slate-800 text-sm italic font-normal">admin</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600">✕</button>
         </div>
-        <nav class="space-y-2 flex-1">
-            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Dashboard</a>
-            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Anggota</a>
-            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Transaksi</a>
-            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-lg font-bold transition text-sm">Withdraw</a>
-            <a href="profile.html" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-blue-600 rounded-lg font-semibold transition text-sm">Profile Saya</a>
+
+        <nav class="space-y-1.5 flex-1">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> 
+                Dashboard
+            </a>
+            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> 
+                Anggota
+            </a>
+            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> 
+                Transaksi
+            </a>
+            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> 
+                Withdraw
+            </a>
+            <a href="profile.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profile Saya</a>
         </nav>
-        
-        <button onclick="logout()" class="flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg font-bold transition text-sm w-full text-left mt-4">
+
+        <button onclick="logout()" class="flex items-center gap-3 px-4 py-3.5 text-red-500 hover:bg-red-50 rounded-2xl font-bold transition text-sm w-full text-left mt-4 group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
             Logout
         </button>
     </aside>
 
-    <main class="flex-1 lg:ml-64 flex flex-col min-h-screen w-full">
-        <header class="bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-slate-100 px-8 py-5 flex justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="lg:hidden p-2 -ml-2 text-slate-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+    <main class="flex-1 lg:ml-72 flex flex-col min-h-screen w-full">
+        
+        <header class="sticky top-0 bg-[#F8FAFC]/95 backdrop-blur-xl z-20 px-6 py-5 border-b border-slate-100 lg:border-none flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-bold text-slate-900 leading-tight">Pengeluaran & Penarikan</h1>
-                    <p class="text-sm text-slate-400">Kelola pengeluaran tunai atau ajukan transfer.</p>
+                    <h1 class="text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight">Withdraw & Kas</h1>
+                    <p class="hidden lg:block text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Kelola Pengeluaran Tunai & Transfer</p>
                 </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="w-11 h-11 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-white ring-4 ring-blue-50" id="adminAvatar">...</div>
             </div>
         </header>
 
-        <div class="p-6 lg:p-10 max-w-7xl mx-auto space-y-8">
+        <div class="p-6 lg:p-10 space-y-8 pb-24">
             
-            <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm animate-fade-in relative overflow-hidden">
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm animate-fade-in relative overflow-hidden">
                 
-                <div class="flex p-1.5 bg-slate-100 rounded-2xl mb-8 relative z-10 max-w-md">
-                    <button onclick="setMode('transfer')" id="btnTabTransfer" class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2">
+                <div class="flex p-1.5 bg-slate-100 rounded-2xl mb-8 relative z-10 w-full md:max-w-md">
+                    <button onclick="setMode('transfer')" id="btnTabTransfer" class="flex-1 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                         Ajukan Transfer
                     </button>
-                    <button onclick="setMode('manual')" id="btnTabManual" class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2">
+                    <button onclick="setMode('manual')" id="btnTabManual" class="flex-1 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
                         Catat Tunai (Manual)
                     </button>
@@ -102,10 +126,10 @@
                     </form>
                 </div>
                 
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-bl-full -mr-6 -mt-6 z-0"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-bl-full -mr-6 -mt-6 z-0 pointer-events-none"></div>
             </div>
 
-            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-fade-in">
+            <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden animate-fade-in">
                 <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                     <div>
                         <h3 class="font-bold text-slate-900 text-lg">Riwayat Pengeluaran</h3>
@@ -114,8 +138,7 @@
                 </div>
                 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-white text-slate-500 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
+                    <table class="w-full text-left border-collapse min-w-[600px]"> <thead class="bg-white text-slate-500 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
                             <tr>
                                 <th class="px-6 py-4 w-40">Tanggal</th>
                                 <th class="px-6 py-4 w-1/3">Keterangan</th>
@@ -146,11 +169,38 @@
 
     <script>
         // ==========================================
-        // UI HELPERS
+        // UI HELPERS & AUTH
         // ==========================================
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         function toggleSidebar() { sidebar.classList.toggle('-translate-x-full'); overlay.classList.toggle('hidden'); }
+
+        async function logout() {
+            if(confirm("Yakin ingin keluar?")) {
+                await window.supabaseClient.auth.signOut();
+                localStorage.clear();
+                window.location.href = '../auth/login.html'; 
+            }
+        }
+
+        // --- NEW: PROFILE LOADER (Agar Avatar Muncul) ---
+        function getInitials(name) {
+            if (!name) return "--";
+            const parts = name.trim().split(/\s+/);
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
+        async function loadAdminProfile() {
+            if(!window.supabaseClient) return;
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if(user) {
+                const { data: profile } = await window.supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
+                if(profile && profile.full_name) {
+                    document.getElementById('adminAvatar').innerText = getInitials(profile.full_name);
+                }
+            }
+        }
 
         function showResult(title, message, isSuccess) {
             const modal = document.getElementById('modalResult');
@@ -188,8 +238,8 @@
 
             if (mode === 'transfer') {
                 // UI Transfer
-                btnTransfer.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2";
-                btnManual.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2";
+                btnTransfer.className = "flex-1 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2";
+                btnManual.className = "flex-1 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2";
                 
                 titleText.innerText = "Form Pengajuan Transfer";
                 titleIndicator.className = "w-1.5 h-6 bg-blue-600 rounded-full";
@@ -197,10 +247,10 @@
                 btnSubmit.innerHTML = "Kirim Pengajuan";
             } else {
                 // UI Manual
-                btnTransfer.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2";
-                btnManual.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2";
+                btnTransfer.className = "flex-1 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2";
+                btnManual.className = "flex-1 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2";
                 
-                titleText.innerText = "Catat Pengeluaran Tunai (Langsung)";
+                titleText.innerText = "Catat Pengeluaran Tunai";
                 titleIndicator.className = "w-1.5 h-6 bg-emerald-500 rounded-full";
                 // Tombol jadi Hijau biar beda
                 btnSubmit.className = "w-full md:w-auto px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:-translate-y-1 transition transform active:scale-95 whitespace-nowrap flex items-center gap-2 justify-center";
@@ -247,7 +297,7 @@
                     // Cek jika deskripsi mengandung tag [TUNAI]
                     if (wd.description && wd.description.includes('[TUNAI]')) {
                         typeBadge = '<span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Tunai</span>';
-                        descDisplay = wd.description.replace('[TUNAI] ', ''); // Hapus tag saat ditampilkan agar rapi
+                        descDisplay = wd.description.replace('[TUNAI] ', ''); 
                     }
 
                     // Logic Tombol Bukti
@@ -339,6 +389,7 @@
         // Initialize
         document.getElementById('formWithdraw').addEventListener('submit', (e) => WithdrawService.submitRequest(e));
         WithdrawService.fetchHistory();
+        loadAdminProfile(); // Load avatar di header
 
     </script>
 </body>
