@@ -3,72 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transparansi | Nusaka Kas</title>
+    <title>Transparansi Keuangan | Nusaka Kas</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .animate-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-600 min-h-screen">
+<body class="bg-[#F8FAFC] text-slate-600 min-h-screen flex flex-col">
 
-    <div class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-3xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-200">
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-xl mx-auto px-6 py-4 flex justify-center items-center">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 </div>
-                <div class="text-lg font-extrabold text-slate-900 tracking-tight">NUSAKA<span class="text-blue-600">Kas</span></div>
-            </div>
-            <span class="text-[10px] font-bold bg-green-100 text-green-700 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse"></span> LIVE
-            </span>
-        </div>
-    </div>
-
-    <main class="max-w-3xl mx-auto p-6 pb-20">
-        
-        <div class="text-center py-6">
-            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Transparansi Keuangan</h1>
-            <p class="text-slate-400 text-xs mt-1 font-medium">Data real-time untuk kepercayaan bersama.</p>
-        </div>
-
-        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-blue-200 relative overflow-hidden mb-8 text-center group">
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white rounded-full mix-blend-overlay opacity-10 blur-3xl -mr-16 -mt-16 group-hover:scale-110 transition duration-1000"></div>
-            
-            <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mb-2 relative z-10">Total Saldo Kas</p>
-            <h2 id="publicSaldo" class="text-4xl md:text-5xl font-black tracking-tight mb-6 relative z-10">Rp ...</h2>
-            
-            <div class="grid grid-cols-2 gap-4 relative z-10 bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                <div class="border-r border-white/10">
-                    <p class="text-[10px] text-emerald-200 uppercase font-bold mb-1">Total Pemasukan</p>
-                    <p id="totalIn" class="text-lg font-bold text-emerald-100">Rp ...</p>
-                </div>
                 <div>
-                    <p class="text-[10px] text-rose-200 uppercase font-bold mb-1">Total Pengeluaran</p>
-                    <p id="totalOut" class="text-lg font-bold text-rose-100">Rp ...</p>
+                    <h1 class="text-lg font-extrabold text-slate-900 leading-none tracking-tight">NUSAKA<span class="text-blue-600">kas</span></h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Public Access</p>
                 </div>
             </div>
+        </div>
+    </nav>
 
-            <div class="text-[10px] text-blue-200 opacity-80 mt-4">Terakhir diperbarui: <span id="lastUpdate">-</span></div>
+    <main class="flex-1 max-w-xl mx-auto w-full p-6 pb-20 animate-fade-in-up">
+        
+        <div class="text-center mb-8 mt-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-600 text-[10px] font-extrabold uppercase tracking-wide border border-green-100 mb-4">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                Data Realtime
+            </span>
+            <h2 class="text-3xl font-black text-slate-900 tracking-tight mb-2">Transparansi Dana</h2>
+            <p class="text-slate-500 text-sm leading-relaxed">Laporan keuangan terbuka untuk kepercayaan bersama. Diupdate otomatis oleh sistem.</p>
+        </div>
+
+        <div class="relative bg-blue-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-blue-200 overflow-hidden mb-10 group">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 -mr-16 -mt-16 animate-pulse"></div>
+            <div class="absolute bottom-0 left-0 w-40 h-40 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -ml-10 -mb-10"></div>
+
+            <div class="relative z-10 text-center">
+                <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mb-3">Sisa Saldo Kas Saat Ini</p>
+                <h3 id="publicSaldo" class="text-5xl font-black tracking-tighter mb-8">Rp ...</h3>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10 hover:bg-white/20 transition">
+                        <div class="flex items-center justify-center gap-1.5 text-emerald-300 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+                            <span class="text-[10px] font-bold uppercase">Pemasukan</span>
+                        </div>
+                        <p id="totalIn" class="text-lg font-bold text-white">...</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10 hover:bg-white/20 transition">
+                        <div class="flex items-center justify-center gap-1.5 text-rose-300 mb-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>
+                            <span class="text-[10px] font-bold uppercase">Pengeluaran</span>
+                        </div>
+                        <p id="totalOut" class="text-lg font-bold text-white">...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-6 px-2">
+            <h3 class="font-bold text-slate-900 text-lg">Aktivitas Terbaru</h3>
+            <span class="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-1 rounded-lg">10 Transaksi Terakhir</span>
         </div>
 
         <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-            <div class="p-6 border-b border-slate-50 bg-slate-50/50">
-                <h3 class="font-bold text-slate-900 text-lg">Mutasi Terakhir</h3>
-                <p class="text-xs text-slate-400 mt-0.5">Gabungan uang masuk & keluar.</p>
-            </div>
-            
             <div id="publicTxList" class="divide-y divide-slate-50">
-                <div class="p-10 text-center text-slate-400 text-sm italic animate-pulse">Sedang memuat data...</div>
+                <div class="p-12 text-center">
+                    <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                    <p class="text-xs text-slate-400 font-medium">Mengambil data dari server...</p>
+                </div>
+            </div>
+            <div class="bg-slate-50 p-4 text-center border-t border-slate-100">
+                <p class="text-[10px] text-slate-400">Data diperbarui: <span id="lastUpdate">-</span></p>
             </div>
         </div>
 
     </main>
+
+    <footer class="py-8 text-center text-slate-400 text-xs border-t border-slate-100 bg-white mt-auto">
+        <p class="font-bold text-slate-900 mb-1">Nusaka Kas System</p>
+        <p>&copy; 2026 HMP AFI. Transparansi untuk kemajuan.</p>
+    </footer>
 
     <script>
         const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
@@ -77,20 +104,24 @@
             if (!window.supabaseClient) return;
 
             try {
-                // 1. HITUNG SALDO & TOTAL
+                // 1. HITUNG TOTAL (Agregat)
+                // Mengambil semua pemasukan (Status: PAID)
                 const { data: inc } = await window.supabaseClient.from('transactions').select('amount').eq('status', 'PAID');
+                // Mengambil semua pengeluaran (Status: APPROVED)
                 const { data: out } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
                 
                 const totalInAmount = inc?.reduce((a, b) => a + b.amount, 0) || 0;
                 const totalOutAmount = out?.reduce((a, b) => a + b.amount, 0) || 0;
                 
+                // Update UI Hero Card
                 document.getElementById('publicSaldo').innerText = formatRupiah(totalInAmount - totalOutAmount);
                 document.getElementById('totalIn').innerText = formatRupiah(totalInAmount);
                 document.getElementById('totalOut').innerText = formatRupiah(totalOutAmount);
-                document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString('id-ID');
+                document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
 
-                // 2. GABUNGKAN RIWAYAT (MASUK & KELUAR)
-                // Ambil 5 Transaksi Masuk Terakhir
+                // 2. AMBIL 5 DATA TERAKHIR (GABUNGAN)
+                
+                // A. Transaksi Masuk
                 const { data: txList } = await window.supabaseClient
                     .from('transactions')
                     .select('amount, created_at, payment_method, tripay_reference, profiles(full_name)')
@@ -98,7 +129,7 @@
                     .order('created_at', { ascending: false })
                     .limit(5);
 
-                // Ambil 5 Pengeluaran Terakhir
+                // B. Transaksi Keluar (Withdraw)
                 const { data: wdList } = await window.supabaseClient
                     .from('withdrawals')
                     .select('amount, created_at, description')
@@ -106,7 +137,7 @@
                     .order('created_at', { ascending: false })
                     .limit(5);
 
-                // Gabungkan Array, Beri Label Tipe, dan Sortir Ulang berdasarkan Tanggal
+                // C. Gabungkan & Normalisasi Data
                 let combined = [];
                 
                 if (txList) {
@@ -115,9 +146,9 @@
                             type: 'IN',
                             amount: item.amount,
                             date: new Date(item.created_at),
-                            desc: item.tripay_reference || 'Iuran Kas',
-                            name: item.profiles?.full_name || 'Hamba Allah',
-                            method: item.payment_method
+                            desc: 'Uang Masuk / Kas', // Default label
+                            detail: item.payment_method, // Metode bayar
+                            name: item.profiles?.full_name || 'Hamba Allah'
                         });
                     });
                 }
@@ -128,61 +159,67 @@
                             type: 'OUT',
                             amount: item.amount,
                             date: new Date(item.created_at),
-                            desc: item.description || 'Pengeluaran',
-                            name: 'Pengurus',
-                            method: 'Withdraw'
+                            desc: item.description || 'Pengeluaran', // Keterangan withdraw
+                            detail: 'Penarikan Dana', 
+                            name: 'Bendahara / Pengurus'
                         });
                     });
                 }
 
-                // Sortir dari yang paling baru
+                // D. Sortir (Terbaru paling atas)
                 combined.sort((a, b) => b.date - a.date);
+                const finalData = combined.slice(0, 10); // Ambil 10 aktivitas terakhir
 
-                // Render ke HTML
+                // E. Render HTML
                 const container = document.getElementById('publicTxList');
                 
-                if (combined.length > 0) {
-                    container.innerHTML = combined.map(item => {
-                        // Sensor Nama untuk Privasi
+                if (finalData.length > 0) {
+                    container.innerHTML = finalData.map(item => {
+                        // Sensor Nama (Privasi)
                         let displayName = item.name;
-                        if (item.type === 'IN' && displayName !== 'Hamba Allah') {
-                            const parts = displayName.split(' ');
-                            displayName = parts[0] + (parts.length > 1 ? " " + parts[1][0] + "***" : "***");
+                        if (item.type === 'IN' && displayName !== 'Hamba Allah' && displayName !== 'Bendahara / Pengurus') {
+                            const parts = displayName.trim().split(' ');
+                            // Ambil nama depan, sensor sisanya (Contoh: Budi S***)
+                            displayName = parts[0] + (parts.length > 1 ? " " + parts[parts.length-1][0] + "***" : "***"); 
                         }
 
-                        // Tentukan Warna & Ikon
+                        // Styling berdasarkan Tipe
                         const isIncome = item.type === 'IN';
-                        const amountColor = isIncome ? 'text-emerald-600' : 'text-rose-600';
-                        const amountPrefix = isIncome ? '+' : '-';
-                        const iconBg = isIncome ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
-                        const iconSvg = isIncome 
-                            ? `<path d="M12 19V5"/><path d="M5 12l7-7 7 7"/>` // Panah Atas
-                            : `<path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/>`; // Panah Bawah
+                        const colorClass = isIncome ? 'text-emerald-600' : 'text-rose-600';
+                        const bgIcon = isIncome ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600';
+                        const sign = isIncome ? '+' : '-';
+                        const icon = isIncome 
+                            ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>`
+                            : `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M19 12l-7 7-7-7"/></svg>`;
 
                         return `
                         <div class="flex items-center justify-between p-5 hover:bg-slate-50 transition group">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-2xl ${iconBg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${iconSvg}</svg>
+                                <div class="w-12 h-12 rounded-2xl ${bgIcon} flex items-center justify-center shadow-sm flex-shrink-0">
+                                    ${icon}
                                 </div>
                                 <div>
-                                    <p class="font-bold text-slate-800 text-sm mb-0.5">${displayName}</p>
+                                    <h4 class="font-bold text-slate-800 text-sm leading-tight mb-0.5">${displayName}</h4>
                                     <p class="text-xs text-slate-500 font-medium line-clamp-1">${item.desc}</p>
-                                    <p class="text-[10px] text-slate-400 mt-1">
-                                        ${item.date.toLocaleDateString('id-ID', {day:'numeric', month:'short'})} • ${item.method}
-                                    </p>
+                                    <div class="flex items-center gap-2 mt-1.5">
+                                        <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md uppercase tracking-wider">${item.date.toLocaleDateString('id-ID', {day:'numeric', month:'short'})}</span>
+                                        <span class="text-[10px] text-slate-400">• ${item.detail}</span>
+                                    </div>
                                 </div>
                             </div>
-                            <span class="text-sm font-extrabold ${amountColor} whitespace-nowrap">
-                                ${amountPrefix} ${formatRupiah(item.amount)}
-                            </span>
+                            <div class="text-right">
+                                <span class="block text-sm font-black ${colorClass}">${sign} ${formatRupiah(item.amount)}</span>
+                            </div>
                         </div>`;
                     }).join('');
                 } else {
-                    container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Belum ada data transaksi.</div>`;
+                    container.innerHTML = `<div class="p-10 text-center text-xs text-slate-400 italic">Belum ada aktivitas keuangan.</div>`;
                 }
 
-            } catch (err) { console.error(err); }
+            } catch (err) { 
+                console.error(err); 
+                document.getElementById('publicTxList').innerHTML = `<div class="p-8 text-center text-red-400 text-xs">Gagal memuat data.</div>`;
+            }
         }
         
         loadData();

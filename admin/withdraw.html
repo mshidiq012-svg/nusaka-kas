@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Withdraw Dana | Nusaka Kas</title>
+    <title>Withdraw & Pengeluaran | Nusaka Kas</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,6 +12,10 @@
         .sidebar-transition { transition: transform 0.3s ease-in-out; }
         .animate-fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Style untuk Tab Aktif/Nonaktif */
+        .tab-active { background-color: white; color: #0f172a; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .tab-inactive { background-color: transparent; color: #64748b; }
     </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -48,8 +52,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
                 </button>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-bold text-slate-900 leading-tight">Penarikan Dana</h1>
-                    <p class="text-sm text-slate-400">Ajukan pencairan dana kas ke Developer.</p>
+                    <h1 class="text-xl md:text-2xl font-bold text-slate-900 leading-tight">Pengeluaran & Penarikan</h1>
+                    <p class="text-sm text-slate-400">Kelola pengeluaran tunai atau ajukan transfer.</p>
                 </div>
             </div>
         </header>
@@ -57,12 +61,22 @@
         <div class="p-6 lg:p-10 max-w-7xl mx-auto space-y-8">
             
             <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm animate-fade-in relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -mr-6 -mt-6 z-0"></div>
+                
+                <div class="flex p-1.5 bg-slate-100 rounded-2xl mb-8 relative z-10 max-w-md">
+                    <button onclick="setMode('transfer')" id="btnTabTransfer" class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                        Ajukan Transfer
+                    </button>
+                    <button onclick="setMode('manual')" id="btnTabManual" class="flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg>
+                        Catat Tunai (Manual)
+                    </button>
+                </div>
 
                 <div class="relative z-10">
-                    <h3 class="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
-                        <span class="w-1.5 h-6 bg-blue-600 rounded-full"></span>
-                        Form Pengajuan Baru
+                    <h3 id="formTitle" class="font-bold text-slate-900 text-lg mb-6 flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-blue-600 rounded-full" id="titleIndicator"></span>
+                        <span id="titleText">Form Pengajuan Transfer</span>
                     </h3>
 
                     <form id="formWithdraw" class="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -76,24 +90,26 @@
                         </div>
 
                         <div class="md:col-span-8">
-                            <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Keperluan / Keterangan</label>
+                            <label class="block text-xs font-bold uppercase text-slate-400 mb-2 ml-1">Keterangan Penggunaan Dana</label>
                             <div class="flex flex-col md:flex-row gap-4">
-                                <textarea id="wd_desc" required rows="1" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 transition" placeholder="Contoh: Bayar sewa gedung..."></textarea>
+                                <textarea id="wd_desc" required rows="1" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-medium focus:outline-none focus:border-blue-500 transition" placeholder="Contoh: Pembelian ATK untuk acara..."></textarea>
                                 
-                                <button type="submit" id="btnSubmit" class="w-full md:w-auto px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-lg shadow-slate-300 hover:bg-slate-800 hover:-translate-y-1 transition transform active:scale-95 whitespace-nowrap">
-                                    Kirim Pengajuan
+                                <button type="submit" id="btnSubmit" class="w-full md:w-auto px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-lg shadow-slate-300 hover:bg-slate-800 hover:-translate-y-1 transition transform active:scale-95 whitespace-nowrap flex items-center gap-2 justify-center">
+                                    <span>Kirim Pengajuan</span>
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
+                
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-bl-full -mr-6 -mt-6 z-0"></div>
             </div>
 
             <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden animate-fade-in">
                 <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                     <div>
-                        <h3 class="font-bold text-slate-900 text-lg">Riwayat Penarikan</h3>
-                        <p class="text-xs text-slate-400 mt-1">Daftar semua permintaan dana.</p>
+                        <h3 class="font-bold text-slate-900 text-lg">Riwayat Pengeluaran</h3>
+                        <p class="text-xs text-slate-400 mt-1">Gabungan data transfer dan pengeluaran tunai.</p>
                     </div>
                 </div>
                 
@@ -102,14 +118,15 @@
                         <thead class="bg-white text-slate-500 text-[10px] uppercase font-bold tracking-widest border-b border-slate-100">
                             <tr>
                                 <th class="px-6 py-4 w-40">Tanggal</th>
-                                <th class="px-6 py-4 w-1/3">Keperluan</th>
+                                <th class="px-6 py-4 w-1/3">Keterangan</th>
                                 <th class="px-6 py-4">Nominal</th>
+                                <th class="px-6 py-4 text-center">Tipe</th>
                                 <th class="px-6 py-4 text-center">Status</th>
-                                <th class="px-6 py-4 text-right">Bukti Transfer</th>
+                                <th class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="wdHistoryBody" class="divide-y divide-slate-50 text-sm">
-                            <tr><td colspan="5" class="p-10 text-center text-slate-400 text-xs italic animate-pulse">Memuat data...</td></tr>
+                            <tr><td colspan="6" class="p-10 text-center text-slate-400 text-xs italic animate-pulse">Memuat data...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -157,6 +174,41 @@
         };
 
         // ==========================================
+        // LOGIC MODE (TRANSFER vs MANUAL)
+        // ==========================================
+        let currentMode = 'transfer'; // 'transfer' or 'manual'
+
+        function setMode(mode) {
+            currentMode = mode;
+            const btnTransfer = document.getElementById('btnTabTransfer');
+            const btnManual = document.getElementById('btnTabManual');
+            const titleText = document.getElementById('titleText');
+            const titleIndicator = document.getElementById('titleIndicator');
+            const btnSubmit = document.getElementById('btnSubmit');
+
+            if (mode === 'transfer') {
+                // UI Transfer
+                btnTransfer.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2";
+                btnManual.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2";
+                
+                titleText.innerText = "Form Pengajuan Transfer";
+                titleIndicator.className = "w-1.5 h-6 bg-blue-600 rounded-full";
+                btnSubmit.className = "w-full md:w-auto px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-lg shadow-slate-300 hover:bg-slate-800 hover:-translate-y-1 transition transform active:scale-95 whitespace-nowrap flex items-center gap-2 justify-center";
+                btnSubmit.innerHTML = "Kirim Pengajuan";
+            } else {
+                // UI Manual
+                btnTransfer.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-inactive flex items-center justify-center gap-2";
+                btnManual.className = "flex-1 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 tab-active flex items-center justify-center gap-2";
+                
+                titleText.innerText = "Catat Pengeluaran Tunai (Langsung)";
+                titleIndicator.className = "w-1.5 h-6 bg-emerald-500 rounded-full";
+                // Tombol jadi Hijau biar beda
+                btnSubmit.className = "w-full md:w-auto px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:-translate-y-1 transition transform active:scale-95 whitespace-nowrap flex items-center gap-2 justify-center";
+                btnSubmit.innerHTML = "Simpan Catatan";
+            }
+        }
+
+        // ==========================================
         // BACKEND SERVICE (WITHDRAW)
         // ==========================================
         const WithdrawService = {
@@ -172,12 +224,12 @@
                     .order('created_at', { ascending: false });
 
                 if (error) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-red-500 text-xs">Error: ${error.message}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 text-xs">Error: ${error.message}</td></tr>`;
                     return;
                 }
 
                 if (!data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 text-xs italic">Belum ada riwayat penarikan.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 text-xs italic">Belum ada riwayat pengeluaran.</td></tr>`;
                     return;
                 }
 
@@ -185,29 +237,38 @@
                     // Logic Warna Status
                     let statusBadge = '';
                     if(wd.status === 'PENDING') statusBadge = '<span class="px-3 py-1 bg-yellow-50 text-yellow-700 border border-yellow-100 rounded-lg text-[10px] font-bold uppercase tracking-wide">Review</span>';
-                    else if(wd.status === 'APPROVED') statusBadge = '<span class="px-3 py-1 bg-green-50 text-green-700 border border-green-100 rounded-lg text-[10px] font-bold uppercase tracking-wide">Sukses</span>';
+                    else if(wd.status === 'APPROVED') statusBadge = '<span class="px-3 py-1 bg-green-50 text-green-700 border border-green-100 rounded-lg text-[10px] font-bold uppercase tracking-wide">Selesai</span>';
                     else statusBadge = '<span class="px-3 py-1 bg-red-50 text-red-700 border border-red-100 rounded-lg text-[10px] font-bold uppercase tracking-wide">Ditolak</span>';
 
-                    // Logic Tombol Bukti TF
-                    let proofButton = '<span class="text-slate-300 text-xs font-medium italic">Belum ada bukti</span>';
+                    // Logic Tipe (Tunai vs Transfer)
+                    let typeBadge = '<span class="text-xs font-bold text-slate-400">Transfer</span>';
+                    let descDisplay = wd.description;
+                    
+                    // Cek jika deskripsi mengandung tag [TUNAI]
+                    if (wd.description && wd.description.includes('[TUNAI]')) {
+                        typeBadge = '<span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Tunai</span>';
+                        descDisplay = wd.description.replace('[TUNAI] ', ''); // Hapus tag saat ditampilkan agar rapi
+                    }
+
+                    // Logic Tombol Bukti
+                    let proofButton = '<span class="text-slate-300 text-xs font-medium italic">-</span>';
                     if (wd.proof_image_url) {
-                        proofButton = `<a href="${wd.proof_image_url}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-100 transition border border-blue-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                            Lihat Foto
-                        </a>`;
+                        proofButton = `<a href="${wd.proof_image_url}" target="_blank" class="text-blue-600 hover:underline text-xs font-bold">Lihat Bukti</a>`;
                     }
 
                     return `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-50 group last:border-none">
                         <td class="px-6 py-4 font-mono text-xs text-slate-500">
                             ${new Date(wd.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'})}
-                            <span class="block text-[10px] text-slate-400 mt-1">${new Date(wd.created_at).toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <p class="text-slate-800 font-medium text-sm leading-relaxed">${wd.description}</p>
+                            <p class="text-slate-800 font-medium text-sm leading-relaxed line-clamp-2">${descDisplay}</p>
                         </td>
                         <td class="px-6 py-4 font-bold text-slate-900 text-base">
                             ${formatRupiah(wd.amount)}
+                        </td>
+                         <td class="px-6 py-4 text-center">
+                            ${typeBadge}
                         </td>
                         <td class="px-6 py-4 text-center">
                             ${statusBadge}
@@ -224,14 +285,14 @@
                 e.preventDefault();
                 const btn = document.getElementById('btnSubmit');
                 const originalText = btn.innerText;
-                btn.innerText = "Mengirim...";
+                btn.innerText = "Memproses...";
                 btn.disabled = true;
 
                 const amount = document.getElementById('wd_amount').value;
-                const desc = document.getElementById('wd_desc').value;
+                let desc = document.getElementById('wd_desc').value;
 
                 if(amount < 10000) {
-                    showResult("Gagal", "Minimal penarikan Rp 10.000", false);
+                    showResult("Gagal", "Minimal nominal Rp 10.000", false);
                     btn.innerText = originalText; btn.disabled = false;
                     return;
                 }
@@ -239,18 +300,30 @@
                 try {
                     const { data: { user } } = await window.supabaseClient.auth.getUser();
                     
+                    // --- LOGIKA UTAMA PERBEDAAN ---
+                    let statusInput = 'PENDING';
+                    
+                    if (currentMode === 'manual') {
+                        statusInput = 'APPROVED'; // Kalau tunai manual, langsung Approved
+                        desc = '[TUNAI] ' + desc; // Tandai di deskripsi
+                    }
+
                     const { error } = await window.supabaseClient
                         .from('withdrawals')
                         .insert({
                             requested_by: user.id,
                             amount: amount,
                             description: desc,
-                            status: 'PENDING'
+                            status: statusInput
                         });
 
                     if (error) throw error;
 
-                    showResult("Terkirim", "Pengajuan berhasil dikirim ke Developer.", true);
+                    const successMsg = currentMode === 'manual' 
+                        ? "Catatan pengeluaran tunai berhasil disimpan." 
+                        : "Pengajuan transfer berhasil dikirim ke Developer.";
+
+                    showResult("Berhasil", successMsg, true);
                     document.getElementById('formWithdraw').reset();
                     this.fetchHistory(); 
 

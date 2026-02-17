@@ -9,9 +9,6 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .sidebar-transition { transition: transform 0.3s ease-in-out; }
-        /* Custom scrollbar untuk navigasi horizontal mobile jika dibutuhkan */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
@@ -37,10 +34,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 Dashboard
             </a>
-            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Anggota</a>
-            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> Transaksi</a>
-            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Withdraw</a>
-            <a href="profile.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profile Saya</a>
+            <a href="anggota.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Anggota</a>
+            <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> Transaksi</a>
+            <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Withdraw</a>
+            <a href="profile.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profile Saya</a>
         </nav>
 
         <button onclick="logout()" class="flex items-center gap-3 px-4 py-3.5 text-red-500 hover:bg-red-50 rounded-2xl font-bold transition text-sm w-full text-left mt-4 group">
@@ -51,44 +48,59 @@
 
     <main class="flex-1 lg:ml-72 flex flex-col min-h-screen w-full">
         
-        <header class="sticky top-0 bg-[#F8FAFC]/95 backdrop-blur-xl z-20 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 lg:border-none">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSidebar()" class="lg:hidden p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-600 active:bg-slate-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </button>
-                <div>
-                    <h1 class="text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight">Ringkasan Kas</h1>
-                    <p class="hidden md:block text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Monitoring Real-time</p>
+        <header class="sticky top-0 bg-[#F8FAFC]/95 backdrop-blur-xl z-20 px-6 py-5 border-b border-slate-100 lg:border-none">
+            
+            <div class="flex items-center justify-between w-full">
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
+                    <div>
+                        <h1 class="text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight">Ringkasan Kas</h1>
+                        <p class="hidden lg:block text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Nusaka Kas Management</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="hidden lg:flex gap-2">
+                         <button onclick="copyLink('portal')" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-600 hover:text-blue-600 transition shadow-sm active:scale-95 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            Portal
+                        </button>
+                         <button onclick="copyLink('public')" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-600 hover:text-green-600 transition shadow-sm active:scale-95 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            Publik
+                        </button>
+                    </div>
+                    
+                    <div class="w-11 h-11 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-white ring-4 ring-blue-50" id="adminAvatar">...</div>
                 </div>
             </div>
-            
-            <div class="flex items-center justify-between md:justify-end gap-3 w-full md:w-auto">
-                <div class="flex gap-2">
-                    <button onclick="copyLink('portal')" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-600 hover:border-blue-300 hover:text-blue-600 transition shadow-sm whitespace-nowrap active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                        Portal
-                    </button>
-                    <button onclick="copyLink('public')" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] font-bold text-slate-600 hover:border-green-300 hover:text-green-600 transition shadow-sm whitespace-nowrap active:scale-95">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                        Publik
-                    </button>
-                </div>
-                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-sm shadow-lg border-2 border-white" id="adminAvatar">...</div>
+
+            <div class="grid grid-cols-2 gap-3 mt-5 lg:hidden">
+                <button onclick="copyLink('portal')" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 shadow-sm active:bg-slate-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    Link Portal
+                </button>
+                <button onclick="copyLink('public')" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 shadow-sm active:bg-slate-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    Link Publik
+                </button>
             </div>
         </header>
 
         <div class="p-6 lg:p-10 space-y-8 pb-24">
-            
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white p-7 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
+                <div class="bg-white p-7 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Saldo Kas</p>
                     <h3 id="totalSaldo" class="text-3xl font-black text-slate-900 tracking-tight">Rp ...</h3>
                 </div>
-                <div class="bg-white p-7 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group">
+                <div class="bg-white p-7 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Masuk Bulan Ini</p>
                     <h3 id="incomeMonth" class="text-3xl font-black text-slate-900 tracking-tight">Rp ...</h3>
                 </div>
-                <div class="bg-white p-7 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group sm:col-span-2 lg:col-span-1">
+                <div class="bg-white p-7 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 sm:col-span-2 lg:col-span-1">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Total Anggota</p>
                     <h3 id="totalMembers" class="text-3xl font-black text-slate-900 tracking-tight">... Org</h3>
                 </div>
@@ -97,7 +109,7 @@
             <div class="bg-white border border-indigo-100 rounded-[2rem] p-8 shadow-xl shadow-indigo-100/50 relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
                 <div class="flex flex-col md:flex-row gap-8 items-start">
-                    <div class="flex-shrink-0 text-center w-full md:w-auto">
+                    <div class="flex-shrink-0 text-center w-full md:w-auto mx-auto">
                         <p class="text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">QRIS Saat Ini</p>
                         <div class="bg-slate-50 p-2 rounded-2xl border border-slate-200 inline-block">
                             <img id="currentQRImg" src="https://placehold.co/200?text=Loading..." class="w-40 h-40 object-contain rounded-xl bg-white" alt="QRIS Loading...">
@@ -105,15 +117,13 @@
                     </div>
                     <div class="flex-1 w-full text-center md:text-left">
                         <h3 class="text-lg font-bold text-slate-900 mb-2">Update QRIS Pembayaran</h3>
-                        <p class="text-sm text-slate-500 mb-6">Ganti gambar QRIS (GoPay/DANA) yang tampil di dashboard member secara real-time.</p>
-                        
+                        <p class="text-sm text-slate-500 mb-6">Ganti gambar QRIS (GoPay/DANA) yang tampil di dashboard member secara instan.</p>
                         <div class="relative group max-w-md mx-auto md:mx-0">
                             <input type="file" id="qrisInput" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewUpload(this)">
                             <div id="uploadBox" class="w-full py-4 bg-indigo-50 border-2 border-dashed border-indigo-200 rounded-xl text-indigo-600 font-bold text-xs flex items-center justify-center gap-2 group-hover:bg-indigo-100 transition">
                                 <span>Klik untuk Pilih Gambar Baru</span>
                             </div>
                         </div>
-
                         <div id="actionButtons" class="hidden mt-4 flex justify-center md:justify-start gap-3">
                             <button onclick="uploadQRIS()" id="btnSaveQR" class="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition">Simpan & Update</button>
                             <button onclick="cancelUpload()" class="px-4 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:text-red-500 transition">Batal</button>
@@ -135,7 +145,6 @@
     </main>
 
 <script>
-    // --- FITUR DASAR ---
     function toggleSidebar() { 
         document.getElementById('sidebar').classList.toggle('-translate-x-full'); 
         document.getElementById('sidebarOverlay').classList.toggle('hidden'); 
@@ -149,7 +158,23 @@
 
     const formatRupiah = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
 
-    // --- LOGOUT ---
+    // --- PERBAIKAN LOGIKA INISIAL ---
+    // Fungsi ini memecah nama berdasarkan spasi
+    // "Manda Yatri" -> ["Manda", "Yatri"] -> Ambil "M" dan "Y" -> "MY"
+    function getInitials(name) {
+        if (!name) return "--";
+        const parts = name.trim().split(/\s+/); // Pisahkan berdasarkan spasi
+        
+        if (parts.length >= 2) {
+            // Jika ada 2 kata atau lebih, ambil huruf pertama kata 1 & 2
+            return (parts[0][0] + parts[1][0]).toUpperCase();
+        } else if (parts.length === 1) {
+            // Jika cuma 1 kata, ambil 2 huruf pertama
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+        return "--";
+    }
+
     async function logout() { 
         if(confirm("Yakin ingin keluar?")) { 
             await window.supabaseClient.auth.signOut(); 
@@ -158,19 +183,22 @@
         } 
     }
 
-    // --- LOAD DATA DASHBOARD ---
     async function loadData() {
         if(!window.supabaseClient) return;
 
         try {
-            // 1. Cek Admin
+            // 1. Cek Admin & SET INISIAL
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             if(user) {
                 const { data: profile } = await window.supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
-                if(profile) document.getElementById('adminAvatar').innerText = profile.full_name.substring(0,2).toUpperCase();
+                
+                // Gunakan fungsi getInitials yang baru
+                if(profile && profile.full_name) {
+                    document.getElementById('adminAvatar').innerText = getInitials(profile.full_name);
+                }
             }
 
-            // 2. Hitung Statistik
+            // 2. Statistik
             const { data: inc } = await window.supabaseClient.from('transactions').select('amount, created_at').eq('status', 'PAID');
             const { data: out } = await window.supabaseClient.from('withdrawals').select('amount').eq('status', 'APPROVED');
             
@@ -186,7 +214,7 @@
             const { count } = await window.supabaseClient.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'member');
             document.getElementById('totalMembers').innerText = (count || 0) + " Org";
 
-            // 3. List Transaksi
+            // 3. Aktivitas Terakhir
             const { data: recent } = await window.supabaseClient.from('transactions')
                 .select('amount, created_at, payment_method, profiles:user_id(full_name)')
                 .eq('status', 'PAID')
@@ -196,10 +224,13 @@
             const listContainer = document.getElementById('recentTxList');
             if (recent && recent.length > 0) {
                 listContainer.innerHTML = recent.map(tx => `
-                    <div class="flex justify-between items-center group border-b border-slate-50 pb-4 last:border-0">
+                    <div class="flex justify-between items-center border-b border-slate-50 pb-4 last:border-0">
                         <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">${tx.profiles?.full_name ? tx.profiles.full_name.substring(0,2).toUpperCase() : '?'}</div>
-                            <div><p class="text-sm font-bold text-slate-800">${tx.profiles?.full_name || 'Tanpa Nama'}</p><p class="text-[10px] text-slate-400 font-medium">${new Date(tx.created_at).toLocaleDateString('id-ID')} • ${tx.payment_method}</p></div>
+                            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">${getInitials(tx.profiles?.full_name)}</div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">${tx.profiles?.full_name || 'User'}</p>
+                                <p class="text-[10px] text-slate-400 font-medium">${new Date(tx.created_at).toLocaleDateString('id-ID')} • ${tx.payment_method}</p>
+                            </div>
                         </div>
                         <span class="text-sm font-extrabold text-emerald-600">+ ${formatRupiah(tx.amount)}</span>
                     </div>
@@ -208,31 +239,23 @@
                 listContainer.innerHTML = `<p class="text-center text-slate-400 text-sm py-4">Belum ada transaksi.</p>`; 
             }
 
-            // 4. LOAD GAMBAR QRIS
-            const { data: qrData } = await window.supabaseClient
-                .from('app_settings')
-                .select('value')
-                .eq('key', 'qris_url')
-                .maybeSingle();
-
+            // 4. Load QRIS
+            const { data: qrData } = await window.supabaseClient.from('app_settings').select('value').eq('key', 'qris_url').maybeSingle();
             if (qrData && qrData.value) {
                 document.getElementById('currentQRImg').src = qrData.value + '?t=' + new Date().getTime();
-            } else {
-                document.getElementById('currentQRImg').src = "https://placehold.co/200?text=QR+Belum+Ada";
             }
 
-        } catch (err) { 
-            console.error("Error LoadData:", err); 
-        }
+        } catch (err) { console.error(err); }
     }
 
+    // --- UPLOAD QRIS LOGIC ---
     function previewUpload(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = e => {
                 document.getElementById('currentQRImg').src = e.target.result;
                 document.getElementById('actionButtons').classList.remove('hidden');
-                document.getElementById('uploadBox').innerHTML = `<span class="text-slate-800">${input.files[0].name}</span>`;
+                document.getElementById('uploadBox').innerHTML = `<span class="text-slate-800 font-bold">${input.files[0].name}</span>`;
             }
             reader.readAsDataURL(input.files[0]);
         }
@@ -248,11 +271,10 @@
     async function uploadQRIS() {
         const fileInput = document.getElementById('qrisInput');
         const file = fileInput.files[0];
-        if (!file) return alert("Pilih file dulu!");
+        if (!file) return;
 
         const btn = document.getElementById('btnSaveQR');
-        const originalText = btn.innerText;
-        btn.innerText = 'Menyimpan...';
+        btn.innerText = 'Proses...';
         btn.disabled = true;
 
         try {
@@ -260,34 +282,23 @@
             const fileExt = file.name.split('.').pop();
             const fileName = `qris_active.${fileExt}`;
             
-            const { error: uploadError } = await supabase.storage
-                .from('app-assets')
-                .upload(fileName, file, { upsert: true, cacheControl: '0' });
+            // 1. Upload
+            const { error: upErr } = await supabase.storage.from('app-assets').upload(fileName, file, { upsert: true });
+            if(upErr) throw upErr;
 
-            if (uploadError) throw new Error("Gagal Upload Storage: " + uploadError.message);
+            // 2. Get URL
+            const { data: urlData } = supabase.storage.from('app-assets').getPublicUrl(fileName);
 
-            const { data: urlData } = supabase.storage
-                .from('app-assets')
-                .getPublicUrl(fileName);
-
-            const { error: dbError } = await supabase
-                .from('app_settings')
-                .upsert({ 
-                    key: 'qris_url', 
-                    value: urlData.publicUrl,
-                    updated_at: new Date()
-                });
-
-            if (dbError) throw new Error("Gagal Simpan ke Database: " + dbError.message);
+            // 3. Save DB
+            const { error: dbErr } = await supabase.from('app_settings').upsert({ key: 'qris_url', value: urlData.publicUrl, updated_at: new Date() });
+            if(dbErr) throw dbErr;
 
             alert("QRIS Berhasil Diupdate!");
-            document.getElementById('actionButtons').classList.add('hidden');
-            document.getElementById('uploadBox').innerHTML = `<span>Klik untuk Pilih Gambar Baru</span>`;
-            loadData();
+            cancelUpload();
         } catch (e) {
-            alert("Terjadi Kesalahan: " + e.message);
+            alert("Gagal: " + e.message);
         } finally {
-            btn.innerText = originalText;
+            btn.innerText = 'Simpan & Update';
             btn.disabled = false;
         }
     }
