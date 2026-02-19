@@ -62,27 +62,33 @@
         <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl text-center relative overflow-hidden animate-pop">
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-rose-600"></div>
             
-            <div class="w-20 h-20 mx-auto bg-red-50 rounded-full border-4 border-red-100 flex items-center justify-center mb-5">
+            <div class="w-20 h-20 mx-auto bg-red-50 rounded-full border-4 border-red-100 flex items-center justify-center mb-5 relative">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                <div class="absolute inset-0 rounded-full border-2 border-red-500 border-t-transparent animate-spin"></div>
             </div>
             
-            <h3 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Akses Diblokir</h3>
-            <p class="text-sm text-slate-500 mb-8 font-medium leading-relaxed">Anda telah salah memasukkan PIN 3 kali berturut-turut. Akun Anda dikunci sementara demi keamanan.</p>
+            <h3 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Akses Dibekukan</h3>
+            <p class="text-sm text-slate-500 mb-2 font-medium leading-relaxed">Terlalu banyak percobaan PIN salah. Akun terkunci sementara demi keamanan.</p>
+            
+            <div class="bg-red-50 rounded-xl py-3 px-4 mb-6 border border-red-100">
+                <p class="text-xs font-bold text-red-500 uppercase tracking-widest mb-1">Coba lagi dalam:</p>
+                <p id="bannedTimer" class="text-2xl font-mono font-black text-red-600">05:00</p>
+            </div>
             
             <div class="space-y-3">
                 <a href="https://wa.me/6281260216188?text=Halo%20Bendahara,%20akun%20saya%20terblokir%20karena%20salah%20PIN%203x.%20Mohon%20bantu%20reset%20PIN%20saya." 
                    target="_blank" 
-                   class="block w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg shadow-slate-200">
-                    Hubungi Bendahara
+                   class="block w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg shadow-slate-200 text-sm">
+                    Minta PIN Baru via WA
                 </a>
-                <button onclick="resetBannedStatus()" class="block w-full py-3.5 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition">
-                    Saya Sudah Punya PIN Baru
+                <button onclick="hideBannedModal()" class="block w-full py-3.5 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition text-sm">
+                    Tutup Pesan Ini
                 </button>
             </div>
         </div>
     </div>
 
-<script>
+    <script>
         // --- UI ALERT HELPER ---
         function showAlert(msg, type) {
             const box = document.getElementById('alertBox');
@@ -91,25 +97,71 @@
             box.classList.remove('hidden');
         }
 
-        // --- SISTEM BANNED LOKAL ---
+        // --- SISTEM BLOKIR 5 MENIT (LOKAL) ---
         let currentNimInput = '';
+        let timerInterval;
 
-        function checkBannedStatus(nim) {
-            const fails = parseInt(localStorage.getItem(`failed_pin_${nim}`)) || 0;
-            if (fails >= 3) {
-                document.getElementById('bannedModal').classList.remove('hidden');
-                return true; // True = Terblokir
-            }
-            return false; // False = Aman
+        function showBannedModal(remainingMs) {
+            document.getElementById('bannedModal').classList.remove('hidden');
+            
+            // Hapus interval sebelumnya jika ada
+            if(timerInterval) clearInterval(timerInterval);
+            
+            let timeLeft = remainingMs;
+            
+            // Fungsi update teks timer setiap detik
+            const updateTimer = () => {
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('bannedModal').classList.add('hidden');
+                    
+                    // Waktu habis, hapus status blokir
+                    if(currentNimInput) {
+                        localStorage.removeItem(`block_time_${currentNimInput}`);
+                        localStorage.removeItem(`failed_pin_${currentNimInput}`);
+                    }
+                    showAlert("Waktu blokir selesai. Silakan coba login kembali.", "success");
+                    return;
+                }
+                
+                // Format milisecond ke Menit:Detik
+                const mins = Math.floor(timeLeft / 60000);
+                const secs = Math.floor((timeLeft % 60000) / 1000);
+                document.getElementById('bannedTimer').innerText = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                
+                timeLeft -= 1000;
+            };
+
+            updateTimer(); // Jalankan sekali langsung
+            timerInterval = setInterval(updateTimer, 1000); // Ulangi tiap 1 detik
         }
 
-        function resetBannedStatus() {
-            if (currentNimInput) {
-                localStorage.removeItem(`failed_pin_${currentNimInput}`);
+        function checkBannedStatus(nim) {
+            const blockTime = parseInt(localStorage.getItem(`block_time_${nim}`));
+            
+            if (blockTime) {
+                const now = Date.now();
+                const diff = now - blockTime;
+                const fiveMinutesMs = 5 * 60 * 1000; // 5 Menit = 300.000 ms
+
+                if (diff < fiveMinutesMs) {
+                    // Masih Terblokir, tampilkan modal dengan sisa waktu
+                    showBannedModal(fiveMinutesMs - diff);
+                    return true; 
+                } else {
+                    // Waktu blokir sudah habis, bersihkan data
+                    localStorage.removeItem(`block_time_${nim}`);
+                    localStorage.removeItem(`failed_pin_${nim}`);
+                    return false;
+                }
             }
+            return false; // Aman (Tidak terblokir)
+        }
+
+        function hideBannedModal() {
             document.getElementById('bannedModal').classList.add('hidden');
             document.getElementById('pin').value = '';
-            document.getElementById('pin').focus();
         }
 
         // --- PROSES LOGIN ---
@@ -122,8 +174,10 @@
             const pin = document.getElementById('pin').value.trim();
             currentNimInput = nim;
 
-            // Cek apakah akun ini sedang diblokir sebelum nembak database
-            if (checkBannedStatus(nim)) return;
+            // CEK 1: Apakah NIM ini sedang diblokir? (Tolak langsung tanpa tembak database)
+            if (checkBannedStatus(nim)) {
+                return; 
+            }
 
             btn.innerText = "Memeriksa...";
             btn.disabled = true;
@@ -146,8 +200,10 @@
                     localStorage.setItem(`failed_pin_${nim}`, fails);
 
                     if (fails >= 3) {
-                        checkBannedStatus(nim); // Tampilkan popup banned
-                        throw new Error("Akses diblokir karena salah PIN 3 kali.");
+                        // Kunci akun selama 5 menit dengan menyimpan waktu saat ini
+                        localStorage.setItem(`block_time_${nim}`, Date.now());
+                        showBannedModal(5 * 60 * 1000); // Panggil modal untuk 5 menit
+                        throw new Error("Akses diblokir sementara karena salah PIN 3 kali.");
                     } else {
                         const sisa = 3 - fails;
                         throw new Error(`NIM atau PIN salah! Sisa percobaan: ${sisa}x lagi.`);
@@ -156,6 +212,7 @@
 
                 // JIKA PIN BENAR: Hapus riwayat gagal
                 localStorage.removeItem(`failed_pin_${nim}`);
+                localStorage.removeItem(`block_time_${nim}`);
 
                 // Simpan Sesi
                 localStorage.setItem('memberSession', JSON.stringify(profile));
@@ -167,8 +224,8 @@
                 }, 1000);
 
             } catch (err) {
-                // Tampilkan pesan error di atas form
-                if (err.message !== "Akses diblokir karena salah PIN 3 kali.") {
+                // Tampilkan pesan error di atas form (Kecuali pesan blokir, karena sudah ada modal)
+                if (err.message !== "Akses diblokir sementara karena salah PIN 3 kali.") {
                     showAlert(err.message, 'error');
                 }
                 btn.innerText = "Masuk Sekarang";
