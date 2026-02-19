@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Transaksi | Nusaka Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,7 +17,6 @@
     </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     
@@ -51,7 +50,6 @@
             <a href="transaksi.html" class="flex items-center gap-3 px-4 py-3.5 bg-blue-50 text-blue-600 rounded-2xl font-bold shadow-sm transition group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg> 
                 Transaksi
-                <span id="navPendingBadge" class="hidden bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-auto">0</span>
             </a>
             <a href="withdraw.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg> Withdraw</a>
             <a href="profile.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-2xl font-semibold transition group"><svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:text-blue-500 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profile Saya</a>
@@ -71,8 +69,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
                 <div>
-                    <h1 class="text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight">Kelola Keuangan</h1>
-                    <p class="hidden lg:block text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Validasi & Input Kas</p>
+                    <h1 class="text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight">Data Transaksi</h1>
+                    <p class="hidden lg:block text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Input Kas & Laporan</p>
                 </div>
             </div>
 
@@ -85,10 +83,7 @@
             
             <div class="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-[1.5rem] border border-slate-100 shadow-sm">
                 <div class="flex gap-4">
-                    <button onclick="switchTab('pending')" id="tabPending" class="px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-blue-600 text-white shadow-lg shadow-blue-200">
-                        Perlu Verifikasi <span id="pendingCount" class="bg-white text-blue-600 px-1.5 py-0.5 rounded-md text-[10px] hidden">0</span>
-                    </button>
-                    <button onclick="switchTab('history')" id="tabHistory" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-50 transition">
+                    <button class="px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-blue-600 text-white shadow-lg shadow-blue-200 cursor-default">
                         Riwayat Transaksi
                     </button>
                 </div>
@@ -135,15 +130,9 @@
                 </div>
             </div>
 
-            <div id="pendingSection" class="min-h-[300px]">
-                <div id="pendingContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <p class="col-span-full text-center py-10 text-slate-400 italic">Memuat data...</p>
-                </div>
-            </div>
-
-            <div id="historySection" class="hidden bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div id="historySection" class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table id="table-tripay" class="w-full text-left">
+                    <table id="table-tripay" class="w-full text-left min-w-[600px]">
                         <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-extrabold tracking-widest border-b border-slate-100">
                             <tr>
                                 <th class="px-8 py-5">Tanggal</th>
@@ -155,6 +144,7 @@
                             </tr>
                         </thead>
                         <tbody id="historyTable" class="divide-y divide-slate-50 text-sm text-slate-600">
+                            <tr><td colspan="6" class="p-10 text-center text-slate-400 text-sm italic">Memuat data...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -206,7 +196,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-400 mb-2">Tahun</label>
                         <div class="relative">
                             <select id="reportYear" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                </select>
+                            </select>
                             <div class="absolute right-4 top-3.5 text-slate-400 pointer-events-none">▼</div>
                         </div>
                     </div>
@@ -231,11 +221,7 @@
             const form = document.getElementById('manualFormContainer');
             const icon = document.getElementById('chevronIcon');
             form.classList.toggle('hidden');
-            if(form.classList.contains('hidden')) {
-                icon.style.transform = 'rotate(0deg)';
-            } else {
-                icon.style.transform = 'rotate(180deg)';
-            }
+            icon.style.transform = form.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         }
         
         async function logout() {
@@ -267,27 +253,6 @@
         const UI = {
             formatRupiah: (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n)
         };
-
-        // --- CORE LOGIC ---
-        function switchTab(tab) {
-            document.getElementById('pendingSection').classList.add('hidden');
-            document.getElementById('historySection').classList.add('hidden');
-            
-            // Reset Button Styles
-            const btnPending = document.getElementById('tabPending');
-            const btnHistory = document.getElementById('tabHistory');
-            
-            btnPending.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 text-slate-500 hover:bg-slate-50";
-            btnHistory.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition text-slate-500 hover:bg-slate-50";
-
-            if(tab === 'pending') {
-                document.getElementById('pendingSection').classList.remove('hidden');
-                btnPending.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition flex items-center gap-2 bg-blue-600 text-white shadow-lg shadow-blue-200";
-            } else {
-                document.getElementById('historySection').classList.remove('hidden');
-                btnHistory.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition bg-blue-600 text-white shadow-lg shadow-blue-200";
-            }
-        }
 
         const TransactionService = {
             loadMembers: async () => {
@@ -326,69 +291,16 @@
 
                 if (error) return console.error(error);
 
-                const pending = data.filter(x => x.status === 'PENDING');
-                const history = data.filter(x => x.status !== 'PENDING');
-
-                // UPDATE BADGE
-                const pendingCount = pending.length;
-                const badge = document.getElementById('pendingCount');
-                const navBadge = document.getElementById('navPendingBadge');
-                
-                if(pendingCount > 0) {
-                    badge.innerText = pendingCount; badge.classList.remove('hidden');
-                    navBadge.innerText = pendingCount; navBadge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden'); navBadge.classList.add('hidden');
-                }
-
-                // RENDER PENDING (CARDS)
-                const pendingContainer = document.getElementById('pendingContainer');
-                if(pending.length === 0) {
-                    pendingContainer.innerHTML = `<div class="col-span-full text-center py-16 bg-white rounded-[2.5rem] border border-slate-100 border-dashed"><p class="text-slate-400 font-medium">Tidak ada transaksi yang perlu diverifikasi.</p></div>`;
-                } else {
-                    pendingContainer.innerHTML = pending.map(item => `
-                        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 flex flex-col gap-5">
-                            <div class="flex justify-between items-start">
-                                <div class="flex items-center gap-3">
-                                     <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">${getInitials(item.profiles?.full_name)}</div>
-                                     <div>
-                                        <h3 class="font-bold text-slate-900 leading-tight">${item.profiles?.full_name || 'Tanpa Nama'}</h3>
-                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">${new Date(item.created_at).toLocaleString('id-ID')}</p>
-                                     </div>
-                                </div>
-                                <span class="bg-yellow-50 text-yellow-600 text-[10px] font-extrabold px-3 py-1.5 rounded-lg uppercase tracking-wider animate-pulse">Perlu Cek</span>
-                            </div>
-                            
-                            <div class="relative group cursor-pointer overflow-hidden rounded-2xl border border-slate-100 h-48 bg-slate-50" onclick="showProof('${item.proof_url}')">
-                                <img src="${item.proof_url}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                                <div class="absolute inset-0 bg-slate-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition backdrop-blur-sm">
-                                    <span class="text-white text-xs font-bold flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full border border-white/30">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> 
-                                        Lihat Bukti
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between">
-                                <span class="text-slate-400 text-xs font-bold uppercase">Total Transfer</span>
-                                <span class="text-xl font-black text-slate-900 tracking-tight">${UI.formatRupiah(item.amount)}</span>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3 mt-auto">
-                                <button onclick="processTx('${item.id}', 'REJECTED')" class="py-3.5 rounded-2xl border border-red-100 text-red-500 font-bold text-xs hover:bg-red-50 transition">Tolak</button>
-                                <button onclick="processTx('${item.id}', 'PAID')" class="py-3.5 rounded-2xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Terima (Lunas)</button>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-
-                // RENDER HISTORY (TABLE)
                 const historyContainer = document.getElementById('historyTable');
-                if(history.length === 0) {
-                    historyContainer.innerHTML = `<tr><td colspan="6" class="p-10 text-center text-slate-400 text-sm italic">Belum ada riwayat.</td></tr>`;
+                if(!data || data.length === 0) {
+                    historyContainer.innerHTML = `<tr><td colspan="6" class="p-10 text-center text-slate-400 text-sm italic">Belum ada riwayat transaksi.</td></tr>`;
                 } else {
-                    historyContainer.innerHTML = history.map(t => {
-                        let statusBadge = t.status === 'PAID' ? `<span class="bg-green-50 text-green-600 px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wide border border-green-100">LUNAS</span>` : `<span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wide border border-red-100">DITOLAK</span>`;
+                    historyContainer.innerHTML = data.map(t => {
+                        let statusBadge = '';
+                        if(t.status === 'PAID') statusBadge = `<span class="bg-green-50 text-green-600 px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wide border border-green-100">LUNAS</span>`;
+                        else if(t.status === 'PENDING') statusBadge = `<span class="bg-yellow-50 text-yellow-600 px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wide border border-yellow-100 animate-pulse">PENDING</span>`;
+                        else statusBadge = `<span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wide border border-red-100">DITOLAK</span>`;
+                        
                         let proofBtn = t.proof_url ? `<button onclick="showProof('${t.proof_url}')" class="text-blue-600 underline text-xs font-bold hover:text-blue-800">Lihat Foto</button>` : `<span class="text-slate-300 text-xs italic font-medium">Manual</span>`;
 
                         return `<tr class="hover:bg-slate-50 border-b border-slate-50 transition group">
@@ -408,7 +320,6 @@
                 }
             },
             
-            // FUNGSI EXPORT WORD BIASA (LIST TRANSAKSI)
             exportData: () => {
                 const { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType, HeadingLevel, AlignmentType } = docx;
 
@@ -459,17 +370,12 @@
             }
         };
 
-        // --- NEW: LOGIKA LAPORAN BULANAN ---
         function toggleReportModal() {
             const modal = document.getElementById('reportModal');
             modal.classList.toggle('hidden');
-            
-            // Auto-select bulan & tahun sekarang
             if(!modal.classList.contains('hidden')) {
                 const now = new Date();
                 document.getElementById('reportMonth').value = now.getMonth() + 1;
-                
-                // Generate Tahun (Otomatis menyesuaikan)
                 const yearSelect = document.getElementById('reportYear');
                 yearSelect.innerHTML = '';
                 const currentYear = now.getFullYear();
@@ -495,33 +401,20 @@
                 const endDate = `${year}-${month.toString().padStart(2, '0')}-${lastDay} 23:59:59`;
 
                 try {
-                    // 1. Ambil PEMASUKAN
                     const { data: incomeData, error: incomeError } = await window.supabaseClient
-                        .from('transactions')
-                        .select('created_at, amount, profiles(full_name)')
-                        .eq('status', 'PAID')
-                        .gte('created_at', startDate).lte('created_at', endDate)
-                        .order('created_at', { ascending: true });
-                    
+                        .from('transactions').select('created_at, amount, profiles(full_name)')
+                        .eq('status', 'PAID').gte('created_at', startDate).lte('created_at', endDate).order('created_at', { ascending: true });
                     if(incomeError) throw incomeError;
 
-                    // 2. Ambil PENGELUARAN (Pastikan nama tabel benar, misal: withdrawals)
                     const { data: expenseData, error: expenseError } = await window.supabaseClient
-                        .from('withdrawals') 
-                        .select('created_at, amount, bank_name, account_number, status') 
-                        .eq('status', 'APPROVED') 
-                        .gte('created_at', startDate).lte('created_at', endDate)
-                        .order('created_at', { ascending: true });
+                        .from('withdrawals').select('created_at, amount, bank_name, account_number, status') 
+                        .eq('status', 'APPROVED').gte('created_at', startDate).lte('created_at', endDate).order('created_at', { ascending: true });
 
                     const safeExpenseData = expenseData || [];
                     await ReportService.createDocx(month, year, incomeData, safeExpenseData);
                     toggleReportModal();
-                } catch (err) {
-                    console.error(err);
-                    alert("Gagal membuat laporan: " + err.message);
-                } finally {
-                    btn.textContent = "Cetak .DOCX"; btn.disabled = false;
-                }
+                } catch (err) { alert("Gagal membuat laporan: " + err.message); } 
+                finally { btn.textContent = "Cetak .DOCX"; btn.disabled = false; }
             },
 
             createDocx: async (month, year, incomes, expenses) => {
@@ -531,7 +424,6 @@
                 const currency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
                 const formatDate = (d) => new Date(d).toLocaleDateString('id-ID');
 
-                // A. TABLE PEMASUKAN
                 let totalMasuk = 0;
                 const incomeRows = [
                     new TableRow({ children: [
@@ -556,7 +448,6 @@
                     });
                 }
 
-                // B. TABLE PENGELUARAN
                 let totalKeluar = 0;
                 const expenseRows = [
                     new TableRow({ children: [
@@ -582,7 +473,6 @@
                     });
                 }
 
-                // C. SUMMARY
                 const saldoAkhir = totalMasuk - totalKeluar;
                 const summaryTable = new Table({
                     width: { size: 60, type: WidthType.PERCENTAGE }, alignment: AlignmentType.RIGHT,
@@ -608,16 +498,12 @@
                         children: [
                             new Paragraph({ text: "LAPORAN KEUANGAN BULANAN", heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER }),
                             new Paragraph({ text: `Periode: ${bulanNama[month]} ${year}`, alignment: AlignmentType.CENTER, spacing: { after: 400 } }),
-
                             new Paragraph({ text: "A. PEMASUKAN (KAS MASUK)", heading: HeadingLevel.HEADING_3, spacing: { before: 200, after: 100 } }),
                             new Table({ rows: incomeRows, width: { size: 100, type: WidthType.PERCENTAGE } }),
-
                             new Paragraph({ text: "B. PENGELUARAN (WITHDRAW)", heading: HeadingLevel.HEADING_3, spacing: { before: 400, after: 100 } }),
                             new Table({ rows: expenseRows, width: { size: 100, type: WidthType.PERCENTAGE } }),
-
                             new Paragraph({ text: "", spacing: { after: 400 } }),
                             summaryTable,
-
                             new Paragraph({ text: "", spacing: { after: 800 } }),
                             new Paragraph({ children: [new TextRun({ text: `Dicetak pada: ${new Date().toLocaleString('id-ID')}`, italics: true, size: 16, color: "888888" })], alignment: AlignmentType.CENTER })
                         ]
@@ -629,19 +515,9 @@
             }
         };
 
-        // --- GLOBAL ACTIONS ---
         function showProof(url) { document.getElementById('proofImg').src = url; document.getElementById('downloadBtn').href = url; document.getElementById('proofModal').classList.remove('hidden'); }
         function closeProof() { document.getElementById('proofModal').classList.add('hidden'); }
-        
-        async function processTx(id, status) {
-            const msg = status === 'PAID' ? "Terima pembayaran ini?" : "Tolak pembayaran ini?";
-            if(confirm(msg)) {
-                await window.supabaseClient.from('transactions').update({status}).eq('id', id);
-                TransactionService.loadAllTransactions(); 
-            }
-        }
 
-        // Init
         document.getElementById('formManual').addEventListener('submit', TransactionService.saveManualTransaction);
         TransactionService.loadMembers();
         TransactionService.loadAllTransactions();
