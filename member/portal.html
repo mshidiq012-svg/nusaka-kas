@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Member | Masuk</title>
+    
+    <meta name="description" content="Nusakakasku adalah portal resmi HMP untuk transparansi dan manajemen uang kas mahasiswa. Lihat laporan keuangan dan riwayat kas secara real-time.">
+    <meta name="keywords" content="nusakakasku, nusaka kas, transparansi kas, login nusaka, sistem kas mahasiswa, hmp afi">
+    <meta name="robots" content="index, follow">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .animate-pop { animation: popUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); } 
+        @keyframes popUp { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    </style>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
@@ -14,20 +23,21 @@
 <body class="bg-slate-50 min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
     
     <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+    <div class="absolute -top-20 -right-20 w-72 h-72 bg-indigo-50 rounded-full blur-3xl opacity-50"></div>
 
     <div class="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl shadow-slate-200/60 border border-white z-10 relative">
         <div class="text-center mb-8">
-            <div class="text-xl font-bold text-blue-600 tracking-tighter mb-2">NUSAKA<span class="text-slate-800 text-xs italic">kas</span></div>
+            <div class="text-xl font-black text-blue-600 tracking-tighter mb-2">NUSAKA<span class="text-slate-800 text-xs italic font-bold">kas</span></div>
             <h2 class="text-2xl font-bold text-slate-900">Portal Mahasiswa</h2>
             <p class="text-slate-400 text-sm mt-1">Masuk untuk bayar kas & cek tagihan.</p>
         </div>
         
-        <div id="alertBox" class="hidden mb-6 p-4 rounded-xl text-xs font-bold text-center"></div>
+        <div id="alertBox" class="hidden mb-6 p-4 rounded-xl text-xs font-bold text-center border"></div>
 
         <form id="loginForm" class="space-y-5">
             <div>
                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 ml-1 tracking-widest">NIM</label>
-                <input type="number" id="nim" required placeholder="Contoh: 1225..." class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+                <input type="text" id="nim" required placeholder="Contoh: 1225..." class="w-full px-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 font-bold focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
             </div>
             <div>
                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2 ml-1 tracking-widest">PIN Keamanan</label>
@@ -48,56 +58,119 @@
         </div>
     </div>
 
+    <div id="bannedModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4 transition-all">
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl text-center relative overflow-hidden animate-pop">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-500 to-rose-600"></div>
+            
+            <div class="w-20 h-20 mx-auto bg-red-50 rounded-full border-4 border-red-100 flex items-center justify-center mb-5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            
+            <h3 class="text-2xl font-black text-slate-900 mb-2 tracking-tight">Akses Diblokir</h3>
+            <p class="text-sm text-slate-500 mb-8 font-medium leading-relaxed">Anda telah salah memasukkan PIN 3 kali berturut-turut. Akun Anda dikunci sementara demi keamanan.</p>
+            
+            <div class="space-y-3">
+                <a href="https://wa.me/6281260216188?text=Halo%20Bendahara,%20akun%20saya%20terblokir%20karena%20salah%20PIN%203x.%20Mohon%20bantu%20reset%20PIN%20saya." 
+                   target="_blank" 
+                   class="block w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition shadow-lg shadow-slate-200">
+                    Hubungi Bendahara
+                </a>
+                <button onclick="resetBannedStatus()" class="block w-full py-3.5 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition">
+                    Saya Sudah Punya PIN Baru
+                </button>
+            </div>
+        </div>
+    </div>
+
 <script>
+        // --- UI ALERT HELPER ---
         function showAlert(msg, type) {
             const box = document.getElementById('alertBox');
             box.innerText = msg;
-            box.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center ${type === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'}`;
+            box.className = `mb-6 p-4 rounded-xl text-xs font-bold text-center border ${type === 'error' ? 'bg-red-50 text-red-500 border-red-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`;
             box.classList.remove('hidden');
         }
 
+        // --- SISTEM BANNED LOKAL ---
+        let currentNimInput = '';
+
+        function checkBannedStatus(nim) {
+            const fails = parseInt(localStorage.getItem(`failed_pin_${nim}`)) || 0;
+            if (fails >= 3) {
+                document.getElementById('bannedModal').classList.remove('hidden');
+                return true; // True = Terblokir
+            }
+            return false; // False = Aman
+        }
+
+        function resetBannedStatus() {
+            if (currentNimInput) {
+                localStorage.removeItem(`failed_pin_${currentNimInput}`);
+            }
+            document.getElementById('bannedModal').classList.add('hidden');
+            document.getElementById('pin').value = '';
+            document.getElementById('pin').focus();
+        }
+
+        // --- PROSES LOGIN ---
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnLogin');
-            btn.innerText = "Memeriksa...";
-            btn.disabled = true;
+            document.getElementById('alertBox').classList.add('hidden');
 
             const nim = document.getElementById('nim').value.trim();
             const pin = document.getElementById('pin').value.trim();
+            currentNimInput = nim;
+
+            // Cek apakah akun ini sedang diblokir sebelum nembak database
+            if (checkBannedStatus(nim)) return;
+
+            btn.innerText = "Memeriksa...";
+            btn.disabled = true;
 
             try {
-                if (!window.supabaseClient) throw new Error("Koneksi Database Gagal!");
+                if (!window.supabaseClient) throw new Error("Sistem sedang sibuk. Tunggu sebentar.");
 
-                // 1. Cek Data Profil (NIM & PIN cocok gak?)
                 const { data: profile, error } = await window.supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('nim', nim)
                     .eq('access_key', pin)
+                    .eq('role', 'member')
                     .single();
 
                 if (error || !profile) {
-                    throw new Error("NIM atau PIN salah!");
+                    // JIKA PIN SALAH: Tambahkan hitungan gagal ke LocalStorage
+                    let fails = parseInt(localStorage.getItem(`failed_pin_${nim}`)) || 0;
+                    fails += 1;
+                    localStorage.setItem(`failed_pin_${nim}`, fails);
+
+                    if (fails >= 3) {
+                        checkBannedStatus(nim); // Tampilkan popup banned
+                        throw new Error("Akses diblokir karena salah PIN 3 kali.");
+                    } else {
+                        const sisa = 3 - fails;
+                        throw new Error(`NIM atau PIN salah! Sisa percobaan: ${sisa}x lagi.`);
+                    }
                 }
 
-                // 2. Login Auth (Supabase Auth)
-                const { error: authError } = await window.supabaseClient.auth.signInWithPassword({
-                    email: profile.email,
-                    password: pin // Kita pakai PIN sebagai password auth
-                });
+                // JIKA PIN BENAR: Hapus riwayat gagal
+                localStorage.removeItem(`failed_pin_${nim}`);
 
-                if (authError) throw new Error(authError.message);
+                // Simpan Sesi
+                localStorage.setItem('memberSession', JSON.stringify(profile));
 
-                // 3. SUKSES & REDIRECT KE DASHBOARD
+                // Redirect
                 showAlert("Login Berhasil! Mengalihkan...", "success");
-                
                 setTimeout(() => {
-                    // PENTING: Karena portal.html dan dashboard.html satu folder, panggil langsung namanya
                     window.location.href = 'dashboard.html'; 
                 }, 1000);
 
             } catch (err) {
-                showAlert(err.message, 'error');
+                // Tampilkan pesan error di atas form
+                if (err.message !== "Akses diblokir karena salah PIN 3 kali.") {
+                    showAlert(err.message, 'error');
+                }
                 btn.innerText = "Masuk Sekarang";
                 btn.disabled = false;
             }
